@@ -20,7 +20,7 @@ public class JpaConfig {
 		
 		hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		hikariConfig.setUsername("root");
-		hikariConfig.setPassword("hrsgh581");
+		hikariConfig.setPassword("");
 		hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/pizzaria");
 		hikariConfig.setMinimumIdle(10);
 		hikariConfig.setMaximumPoolSize(20);
