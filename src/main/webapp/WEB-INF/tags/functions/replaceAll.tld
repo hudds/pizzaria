@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.0">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>url-construction</short-name>
+    <uri>http://schema.test.com/xmlns</uri>
+
+    <function>
+        <name>replaceAll</name>
+        <function-class>br.com.pizzaria.viewhelpers.JstlStrings</function-class>
+        <function-signature>java.lang.String replaceAll(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    </function>
+
+</taglib>

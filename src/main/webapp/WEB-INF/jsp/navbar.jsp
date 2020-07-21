@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+    <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<c:url value="${pageContext.request.contextPath}/resources/imagens/" var="linkImagens"></c:url>
+<header>
+	<nav class = "navbar navbar-expand-lg navbar-light bg-danger" style="font-size: 1.5em;">
+	<a class="navbar-brand mr-5" href="#">
+		<img alt="pizza" src="${linkImagens }favicon.png" width="70" height="70">
+	</a>
+		<ul class = "navbar-nav">
+			
+			<li class= "nav-item">
+				<a class = "nav-link text-light navbar-link" href='<c:url value="/"/>'>Home</a>
+			</li>
+			<li class= "nav-item">
+				<a class = "nav-link text-light navbar-link" href='<c:url value="/sabor?tipo=SALGADA"/>'>Sabores</a>
+			</li>
+			<li class= "nav-item">
+				<a class = "nav-link text-light navbar-link" href='<c:url value="/pizza"/>'>Pizzas</a>
+			</li>
+			<sec:authorize access="hasRole('ADMIN')">
+				<li class= "nav-item">
+					<a class = "nav-link text-light navbar-link" href='<c:url value="/usuarios"/>'>Usuários</a>
+				</li>
+			</sec:authorize>
+		</ul>
+		<ul class="navbar-nav ml-auto">
+			<sec:authorize access="!isAuthenticated()">		
+				<li class= "nav-item">
+					<a class = "nav-link text-light navbar-link" href='<c:url value="/login"/>'>Login</a>
+				</li>
+				<li class= "nav-item">
+					<a class = "nav-link text-light navbar-link" href='<c:url value="/usuarios/cadastro"/>'>Criar conta</a>
+				</li>
+			</sec:authorize>
+			<sec:authorize access="isAuthenticated()">
+				<li class= "nav-item">
+					<a class = "nav-link text-light" href='#'>
+						Logado como: <sec:authentication property="principal.username"/>
+					</a>
+				</li>		
+				<li class= "nav-item">
+					<a class = "nav-link text-light" href='<c:url value="/logout"/>'>Logout</a>
+				</li>
+			</sec:authorize>
+		</ul>
+	</nav>
+</header>
