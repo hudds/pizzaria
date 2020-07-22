@@ -2,15 +2,20 @@ package br.com.pizzaria.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.com.pizzaria.model.Carrinho;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
+import br.com.pizzaria.model.form.PedidoPizzaForm;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.service.SaborService;
 import br.com.pizzaria.util.ConversoesParaString;
@@ -23,6 +28,9 @@ public class PedidoController {
 	private PizzaService pizzaService;
 	@Autowired
 	private SaborService saborService;
+	@Autowired
+	private Carrinho carrinho;
+	
 
 	@RequestMapping(path = { "/fazerPedido" }, method = RequestMethod.GET)
 	public ModelAndView formsDePedido(@RequestParam(name = "pizza", required = false) Integer idPizza,
@@ -31,11 +39,9 @@ public class PedidoController {
 		return modelAndView;
 	}
 
-	@RequestMapping(path = { "/fazerPedido" }, method = RequestMethod.POST)
-	public ModelAndView adicionaAoPedido(@RequestParam(name = "pizza", required = false) Integer idPizza,
-			@RequestParam(name = "sabores", required = false) List<Integer> idsSabores) {
-		ModelAndView modelAndView = decideQualFormRetornar(idPizza, idsSabores);
-		return modelAndView;
+	@RequestMapping(path = { "/addPizza" }, method = RequestMethod.POST)
+	public ModelAndView adicionaPizzaAoCarrinho(@ModelAttribute("novoPedidoPizza") @Valid PedidoPizzaForm pedidoPizza) {
+		return null;
 	}
 	
 	private ModelAndView decideQualFormRetornar(Integer idPizza, List<Integer> idsSabores) {

@@ -18,6 +18,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_PEDIDOS_DE_PIZZAS")
 public class PedidoPizza implements ItemCarrinho{
+	
+	public static final Integer SABORES_QUANTIDADE_MAXIMA = 4;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,8 @@ public class PedidoPizza implements ItemCarrinho{
 	private Pizza pizza;
 	@Column(name="QUANTIDADE")
 	private Integer quantidade;
-
+	
+	
 	public String getDescricao() {
 		StringBuilder descricao = new StringBuilder("Pizza " + getTitulo() + " sabor ");
 		if (getSabores().size() > 1) {

@@ -1,5 +1,6 @@
 package br.com.pizzaria.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -43,8 +44,8 @@ public class SaborService {
 		return saborDAO.buscaSabores();
 	}
 
-	public void gravaSabor(Sabor sabor) {
-		saborDAO.gravaSabor(sabor);
+	public Integer gravaSabor(Sabor sabor) {
+		return saborDAO.gravaSabor(sabor);
 	}
 
 	public Sabor buscaSabor(Integer id) {
@@ -61,6 +62,10 @@ public class SaborService {
 	
 	public TipoSabor buscaTipoSaborPeloId(Integer id) {
 		return saborDAO.buscaTipoSaborPeloId(id);
+	}
+
+	public List<Sabor> buscaSabores(Collection<Integer> idsSabores) {
+		return this.saborDAO.buscaSabores(idsSabores);
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.pizzaria.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -22,8 +23,9 @@ public class SaborDAO {
 		return em.find(Sabor.class, id);
 	}
 	
-	public void gravaSabor(Sabor sabor) {
+	public Integer gravaSabor(Sabor sabor) {
 		em.persist(sabor);
+		return sabor.getId();
 	}
 	
 	public List<Sabor> buscaSaboresPorTipo(TipoSabor tipo){
@@ -64,6 +66,7 @@ public class SaborDAO {
 		String jpql = "delete from Sabor s where s.id =:pId";
 		Query query = em.createQuery(jpql);
 		query.setParameter("pId", id);
+		query.executeUpdate();
 	}
 
 	public TipoSabor buscaTipoSaborPeloId(Integer id) {
@@ -71,5 +74,12 @@ public class SaborDAO {
 		TypedQuery<TipoSabor> query = em.createQuery(jpql, TipoSabor.class);
 		query.setParameter("pId", id);
 		return query.getSingleResult();
+	}
+
+	public List<Sabor> buscaSabores(Collection<Integer> idsSabores) {
+		String jpql = "select s from Sabor s where s.id in (:pIds)";
+		TypedQuery<Sabor> query = em.createQuery(jpql, Sabor.class);
+		query.setParameter("pIds", idsSabores);
+		return query.getResultList();
 	}
 }
