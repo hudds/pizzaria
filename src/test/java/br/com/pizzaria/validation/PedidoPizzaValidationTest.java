@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import org.springframework.validation.Errors;
 
 import br.com.pizzaria.dao.PizzaDAO;
 import br.com.pizzaria.dao.SaborDAO;
+import br.com.pizzaria.model.PedidoPizza;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
@@ -31,7 +33,7 @@ import br.com.pizzaria.service.SaborService;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SaborService.class, SaborDAO.class, PizzaService.class, PizzaDAO.class})
-@EntityScan(basePackageClasses = { Sabor.class, PedidoPizzaForm.class})
+@EntityScan(basePackageClasses = { Sabor.class})
 @DataJpaTest
 @AutoConfigurationPackage
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -140,6 +142,36 @@ public class PedidoPizzaValidationTest {
 		
 	}
 	
+	
+	@Test
+	public void testQuantidadeDeSaboresInvalida() {
+		IntStream.range(0, 11).forEach(i -> {
+			Integer idPizza = em.persistAndGetId(criaPizza(TipoSabor.SALGADA), Integer.class);
+			List<Integer> idsSabores = new ArrayList<Integer>();
+			IntStream.range(0, i).forEach(j -> {
+				idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.SALGADA), Integer.class));			
+			});
+			PedidoPizzaForm pedido = new PedidoPizzaForm();
+			pedido.setIdPizza(idPizza);
+			pedido.setIdsSabores(idsSabores);
+			pedido.setQuantidade(1);
+			
+			Errors errors = new BeanPropertyBindingResult(pedido, "novoPedidoPizza");
+			PedidoPizzaValidation validation = new PedidoPizzaValidation(pizzaService, saborService);
+			validation.validate(pedido, errors);
+			System.out.println(pedido.getIdsSabores().size());
+			if(pedido.getIdsSabores().size() >= 1 && pedido.getIdsSabores().size() <= PedidoPizza.SABORES_QUANTIDADE_MAXIMA ) {
+				assertThat(errors.hasErrors()).isFalse();
+			} else {
+				assertThat(errors.hasErrors()).isTrue();
+				assertThat(errors.getFieldError("idsSabores")).isNotNull();
+			}
+			
+		});
+		
+		
+		
+	}
 	
 	private Sabor criaSabor(TipoSabor tipoSabor) {
 		Sabor sabor = new Sabor();

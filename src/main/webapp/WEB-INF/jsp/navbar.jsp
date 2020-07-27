@@ -2,7 +2,8 @@
     pageEncoding="UTF-8"%>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<c:url value="${pageContext.request.contextPath}/resources/imagens/" var="linkImagens"></c:url>
+<c:set value="${pageContext.request.contextPath}" var="contextPath" scope="application"/>
+<c:url value="${contextPath}/resources/imagens/" var="linkImagens"></c:url>
 <header>
 	<nav class = "navbar navbar-expand-lg navbar-light bg-danger" style="font-size: 1.5em;">
 	<a class="navbar-brand mr-5" href="#">
@@ -22,6 +23,9 @@
 			<sec:authorize access="hasRole('ADMIN')">
 				<li class= "nav-item">
 					<a class = "nav-link text-light navbar-link" href='<c:url value="/usuarios"/>'>Usuários</a>
+				</li>
+				<li class= "nav-item">
+					<a class = "nav-link text-light navbar-link" href='<c:url value="/bebida/lista"/>'>Bebidas</a>
 				</li>
 			</sec:authorize>
 		</ul>

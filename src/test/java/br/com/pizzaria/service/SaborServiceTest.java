@@ -1,16 +1,12 @@
 package br.com.pizzaria.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import br.com.pizzaria.dao.SaborDAO;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
-import br.com.pizzaria.service.SaborService;
-import br.com.pizzaria.util.Range;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SaborService.class, SaborDAO.class})

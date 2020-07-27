@@ -5,7 +5,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +24,7 @@ import br.com.pizzaria.model.form.PedidoPizzaForm;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.service.SaborService;
 import br.com.pizzaria.util.ConversoesParaString;
+import br.com.pizzaria.validation.PedidoPizzaValidation;
 
 @Controller
 @RequestMapping(path = { "/pedido" })
@@ -32,15 +38,28 @@ public class PedidoController {
 	private Carrinho carrinho;
 	
 
+	@InitBinder(value = {"novoPedidoPizza"})
+	public void initBinder(WebDataBinder webDataBinder) {
+		webDataBinder.addValidators(new PedidoPizzaValidation(pizzaService, saborService));
+	}
+	
 	@RequestMapping(path = { "/fazerPedido" }, method = RequestMethod.GET)
 	public ModelAndView formsDePedido(@RequestParam(name = "pizza", required = false) Integer idPizza,
-			@RequestParam(name = "sabores", required = false) List<Integer> idsSabores) {
+			@RequestParam(name = "sabores", required = false) List<Integer> idsSabores, PedidoPizzaForm pedidoPizzaForm) {
 		ModelAndView modelAndView = decideQualFormRetornar(idPizza, idsSabores);
+		modelAndView.addObject("novoPedidoPizza", pedidoPizzaForm);
 		return modelAndView;
 	}
 
 	@RequestMapping(path = { "/addPizza" }, method = RequestMethod.POST)
-	public ModelAndView adicionaPizzaAoCarrinho(@ModelAttribute("novoPedidoPizza") @Valid PedidoPizzaForm pedidoPizza) {
+	public ModelAndView adicionaPizzaAoCarrinho(@ModelAttribute("novoPedidoPizza") @Valid PedidoPizzaForm pedidoPizzaForm, BindingResult bindingResult) {
+		ModelAndView modelAndView = new ModelAndView();
+		if(bindingResult.hasErrors()) {
+			return formsDePedido(pedidoPizzaForm.getIdPizza(), pedidoPizzaForm.getIdsSabores(), pedidoPizzaForm);
+		}
+		
+		this.carrinho.adicionaItem(pedidoPizzaForm.createPedidoPizza(pizzaService, saborService));
+		
 		return null;
 	}
 	
@@ -50,14 +69,12 @@ public class PedidoController {
 		boolean osDoisParametrosSaoNulos = idPizza == null && idsSaboresEhNulo;
 
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("method", osDoisParametrosSaoNulos ? "GET" : "POST");
 
 		if (osDoisParametrosSaoNulos || idPizza == null) {
 			modelAndView.setViewName("pedido/formEscolhaPizza");
 			TipoSabor tipoSabor = idsSaboresEhNulo ? null : saborService.buscaTipoSaborPeloId(idsSabores.get(0));
 			List<Pizza> pizzas = idsSaboresEhNulo ? pizzaService.buscaPizzas() : pizzaService.buscaPizzasPeloTipoSabor(tipoSabor);
 			modelAndView.addObject("pizzas", pizzas);
-			modelAndView.addObject("idsSaboresSelecionados", ConversoesParaString.listaSemColchetes(idsSabores));
 		} else {
 			modelAndView.setViewName(("pedido/formEscolhaSabores"));
 			Pizza pizzaSelecionada = pizzaService.buscaPizza(idPizza);

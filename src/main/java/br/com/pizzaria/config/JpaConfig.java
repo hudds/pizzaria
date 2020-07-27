@@ -30,24 +30,5 @@ public class JpaConfig {
 		
 		return dataSource;
 	}
-
-//	@Bean
-//	public DataSource dataSource() throws PropertyVetoException {
-//		ComboPooledDataSource dataSource = new ComboPooledDataSource();
-//		
-//		dataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
-//		dataSource.setUser("root");
-//		dataSource.setPassword("hrsgh581");
-//		dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/pizzaria");
-//		dataSource.setInitialPoolSize(15);
-//		dataSource.setMinPoolSize(10);
-//		dataSource.setMaxPoolSize(20);
-//		dataSource.setIdleConnectionTestPeriod(60);
-//		dataSource.setMaxIdleTime(1200);
-//		dataSource.setNumHelperThreads(30);
-//		dataSource.setTestConnectionOnCheckin(true);
-//		
-//		return dataSource;
-//	}
 	
 }

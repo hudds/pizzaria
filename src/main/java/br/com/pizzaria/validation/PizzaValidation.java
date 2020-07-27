@@ -1,5 +1,7 @@
 package br.com.pizzaria.validation;
 
+import java.math.BigDecimal;
+
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -18,7 +20,13 @@ public class PizzaValidation implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "titulo", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "descricao", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "preco", "field.required");
-
+		
+		PizzaForm pizza = (PizzaForm) target;
+		
+		if(pizza.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.rejectValue("preco", "field.invalid");
+		}
+		
 	}
 
 }
