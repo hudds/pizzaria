@@ -5,6 +5,7 @@ const templateSaborSelecionado = document.querySelector("#template-sabor-selecio
 const campoBusca = document.querySelector(".campo-busca");
 const contextPath = document.querySelector("#context-path").value;
 const tipoSelecionado = document.querySelector("#input-tipo-selecionado").value;
+const formConfirmarPedido = document.querySelector(".form-confirmar-pedido-pizza");
 
 const saboresSelecionados = new Map();
 
@@ -21,13 +22,13 @@ function selecionaSabor(sabor) {
 	}
     if(saboresSelecionados.get(sabor["id"]) == undefined){
         listaSaboresSelecionados.appendChild(criaElementoSaborSelecionado(sabor))
-        saboresSelecionados.set(sabor["id"], sabor)
+		saboresSelecionados.set(sabor["id"], sabor)
+		atualizaInputIdsSabores();
     }
 }
 
 function deselecionaSabor(id, elementoSaborSelecionado){
     saboresSelecionados.delete(id);
-    //elementoSaborSelecionado.innerHTML=""
     elementoSaborSelecionado.outerHTML=""
 }
 
@@ -65,12 +66,6 @@ function renderizaSabores(sabores){
 	}
 }
 
-// function setTipoSelecionado(tipo){
-// 	tipoSelecionado = tipo;
-// 	document.querySelector(".dropdown-tipo-selecionado").innerText = "Exibindo somente pizzas do tipo: "+tipoSelecionado;
-	
-// }
-
 function acaoBuscar(){
 	console.log(tipoSelecionado)
 	var busca = campoBusca.value.trim();
@@ -87,17 +82,6 @@ function acaoBuscar(){
 	renderizaSabores(sabores);
 }
 
-// function adicionaEventosAoDropdownTipos(){
-// 	var itensDropDown = document.querySelectorAll(".dropdown-item-tipo")
-// 	for(let i = 0; i < itensDropDown.length; i++){
-// 		var itemDropdown = itensDropDown[i]
-// 		itemDropdown.addEventListener("click", function(e){
-// 			setTipoSelecionado(e.target.innerText)
-// 			acaoBuscar()
-// 		})
-// 	}
-// }
-
 function adicionaEventoAoFormBusca(){
 	document.querySelector(".form-busca").addEventListener("keypress", function(e) {
 		if (e.which == 13 || e.keyCode == 13) {
@@ -107,9 +91,17 @@ function adicionaEventoAoFormBusca(){
 	})
 }
 
+function atualizaInputIdsSabores(){
+	var campoSabores = formConfirmarPedido.querySelector(".campo-sabores")
+	var idsIterator = saboresSelecionados.keys();
+	campoSabores.value = "";
+	for(let id of idsIterator){
+		campoSabores.value += id + ",";
+	}
+	campoSabores.value = campoSabores.value.slice(0,-1)
+}
 
-//setTipoSelecionado("SALGADA")
+
 renderizaSabores(buscaSabores(tipoSelecionado))
-//adicionaEventosAoDropdownTipos()
 adicionaEventoAoFormBusca()
 console.log(contextPath)

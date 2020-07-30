@@ -18,7 +18,7 @@
 			</div>
 		</c:if>
 		<div class="container text-center">
-			<c:forEach items="${pizzas }" var="pizza">
+			<c:forEach items="${pizzas}" var="pizza">
 					<div class="card d-inline-block m-2" style="width: 18rem;">
 						<div class="card-body">
 							<h5 class="card-title">${pizza.titulo}</h5>

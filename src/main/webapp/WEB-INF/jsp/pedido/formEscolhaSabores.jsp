@@ -30,9 +30,9 @@
 					</li>
 				</template>
 			</ul>
-			<form:form class="form-confirmar-pedido-pizza" modelAttribute="novoPedidoPizza" method="POST" action="${pageContext.request.contextPath}/pedido/fazerPedido">
-				<form:hidden path="pizza" value="${pizzaSelecionada.id}"/>
-				<form:hidden class="campo-sabores" path="sabores"/>
+			<form:form class="form-confirmar-pedido-pizza" modelAttribute="novoPedidoPizza" method="POST" action="${pageContext.request.contextPath}/pedido/addPizza">
+				<form:hidden path="idPizza" value="${pizzaSelecionada.id}"/>
+				<form:hidden class="campo-sabores" path="idsSabores"/>
 				<button id="btn-confirmar-pedido-pizza" type="submit" class="btn btn-danger">Confirmar</button>
 			</form:form>
 		</div>

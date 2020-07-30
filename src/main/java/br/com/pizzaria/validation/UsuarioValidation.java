@@ -7,22 +7,21 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.model.form.UsuarioForm;
+import br.com.pizzaria.service.UsuarioService;
 
 public class UsuarioValidation implements Validator {
 
 	private static final String REGEX_EMAIL_VALIDO = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
-	private UsuarioDAO usuarioDAO;
+	private UsuarioService usuarioService;
 	
-	public UsuarioValidation(UsuarioDAO usuarioDAO) {
-		this.usuarioDAO = usuarioDAO;
+	public UsuarioValidation(UsuarioService usuarioService) {
+		this.usuarioService = usuarioService;
 		
 	}
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
-		// TODO Auto-generated method stub
 		return UsuarioForm.class.isAssignableFrom(clazz);
 	}
 
@@ -75,7 +74,7 @@ public class UsuarioValidation implements Validator {
 	
 	private boolean nomeDeUsuarioOuEmailExiste(String nomeDeUsuarioOuEmail) {
 		try {
-			usuarioDAO.loadUserByUsername(nomeDeUsuarioOuEmail);
+			usuarioService.loadUserByUsername(nomeDeUsuarioOuEmail);
 			return true;
 		} catch(UsernameNotFoundException e) {
 			return false;

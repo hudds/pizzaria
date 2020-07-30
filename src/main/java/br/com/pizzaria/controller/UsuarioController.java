@@ -20,6 +20,7 @@ import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.model.Role;
 import br.com.pizzaria.model.Usuario;
 import br.com.pizzaria.model.form.UsuarioForm;
+import br.com.pizzaria.service.UsuarioService;
 import br.com.pizzaria.validation.UsuarioValidation;
 
 @Controller
@@ -27,27 +28,27 @@ import br.com.pizzaria.validation.UsuarioValidation;
 public class UsuarioController {
 
 	@Autowired
-	private UsuarioDAO usuarioDAO;
+	private UsuarioService usuarioService;
 	@Autowired
 	private RoleDAO roleDAO;
 
 	@InitBinder("novoUsuario")
 	public void initBinder(WebDataBinder binder) {
-		binder.addValidators(new UsuarioValidation(usuarioDAO));
+		binder.addValidators(new UsuarioValidation(usuarioService));
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView usuarios() {
 		ModelAndView modelAndView = new ModelAndView("usuario/usuarios");
 
-		modelAndView.addObject("usuarios", usuarioDAO.getUsuarios(false));
+		modelAndView.addObject("usuarios", usuarioService.getUsuarios(false));
 		return modelAndView;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = { "/roles/{id}" })
 	public ModelAndView usuarioRoles(@PathVariable(name = "id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView("usuario/roles");
-		modelAndView.addObject("usuario", usuarioDAO.getUsuario(id));
+		modelAndView.addObject("usuario", usuarioService.getUsuario(id));
 		modelAndView.addObject("roles", roleDAO.getRoles());
 
 		return modelAndView;
@@ -56,7 +57,7 @@ public class UsuarioController {
 	@RequestMapping(method = RequestMethod.POST, path = { "/roles" })
 	@Transactional
 	public String editaRoles(Usuario usuario) {
-		usuarioDAO.getUsuario(usuario.getId()).setRoles(usuario.getRoles());
+		usuarioService.getUsuario(usuario.getId()).setRoles(usuario.getRoles());
 		return "redirect:roles/" + usuario.getId();
 	}
 
@@ -77,7 +78,7 @@ public class UsuarioController {
 		
 		Usuario usuario = novoUsuario.createUsuario();
 		usuario.addRole(new Role("ROLE_CLIENTE"));
-		usuarioDAO.grava(usuario);
+		usuarioService.grava(usuario);
 		attributes.addFlashAttribute("usuario", novoUsuario);
 		return new ModelAndView("redirect:/login");
 	}

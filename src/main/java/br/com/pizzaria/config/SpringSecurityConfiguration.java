@@ -12,13 +12,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import br.com.pizzaria.dao.UsuarioDAO;
+import br.com.pizzaria.service.UsuarioService;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 	@Autowired
-	private UsuarioDAO usuarioDAO;
+	private UsuarioService usuarioService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -34,6 +35,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 		.antMatchers("/bebida/delete/**").hasRole("ADMIN")
 		.antMatchers("/bebida/edit/**").hasRole("ADMIN")
 		.antMatchers("/bebida/cadastro/**").hasRole("ADMIN")
+		.antMatchers("/pedido/endereco/**").authenticated()
 		.antMatchers("/pizza/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/pizza/edit/**").hasRole("ADMIN")
 		.antMatchers("/pizza/delete/**").hasRole("ADMIN")
@@ -44,7 +46,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(usuarioDAO).passwordEncoder(new BCryptPasswordEncoder());
+		auth.userDetailsService(usuarioService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 	
 	

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import br.com.pizzaria.model.Usuario;
 
 @Repository
-public class UsuarioDAO implements UserDetailsService{
+public class UsuarioDAO{
 
 	@Autowired
 	private EntityManager em;
@@ -31,7 +31,6 @@ public class UsuarioDAO implements UserDetailsService{
 		return em.createQuery(jpql, Usuario.class).getResultList();
 	}
 	
-	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
 		String jpql = "select u from Usuario u where u.nomeDeUsuario = :pUsernameOrEmail or u.email = :pUsernameOrEmail";
 		TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
@@ -48,6 +47,11 @@ public class UsuarioDAO implements UserDetailsService{
 
 	public void grava(Usuario usuario) {
 		em.persist(usuario);
+	}
+
+	public void edita(Usuario usuario) {
+		em.merge(usuario);
+		
 	}
 
 }

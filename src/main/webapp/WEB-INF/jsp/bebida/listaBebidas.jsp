@@ -27,7 +27,6 @@
 				<thead>
 					<tr>
 						<th scope="col">Título</th>
-						<th scope="col">Descrição</th>
 						<th scope="col">Valor</th>
 					</tr>
 				</thead>
@@ -35,7 +34,6 @@
 					<c:forEach items="${bebidas}" var="bebida">
 						<tr>
 							<td>${bebida.titulo}</td>
-							<td>${bebida.descricao}</td>
 							<td><fmt:formatNumber type="currency" value="${bebida.valor}" currencyCode="BRL" /></td>
 							<sec:authorize access="hasRole('ADMIN')">
 								<td>

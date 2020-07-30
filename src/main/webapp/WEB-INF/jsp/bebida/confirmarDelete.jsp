@@ -13,7 +13,6 @@
 			<div class="card d-inline-block m-2" style="width: 18rem;">
 				<div class="card-body">
 					<h5 class="card-title">${bebida.titulo}</h5>
-					<p class="card-text">${bebida.descricao}</p>
 					<p class="card-text"><fmt:formatNumber value="${bebida.valor}" type="currency" currencyCode="BRL"/></p>					
 				</div>
 			</div>

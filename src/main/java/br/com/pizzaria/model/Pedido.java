@@ -80,6 +80,22 @@ public class Pedido {
 	public void setHoraPedido(LocalDateTime horaPedido) {
 		this.horaPedido = horaPedido;
 	}
+
+	public List<PedidoBebida> getBebidas() {
+		return bebidas;
+	}
+
+	public void setBebidas(List<PedidoBebida> bebidas) {
+		this.bebidas = bebidas;
+	}
+
+	public List<PedidoPizza> getPizzas() {
+		return pizzas;
+	}
+
+	public void setPizzas(List<PedidoPizza> pizzas) {
+		this.pizzas = pizzas;
+	}
 	
 	
 	

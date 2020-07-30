@@ -17,11 +17,6 @@
 				<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="titulo"></form:errors>
 			</div>
 			<div class="form-group">
-				<label>Descrição: </label>
-				<form:textarea value="${bebida.descricao}" type="text" cssClass="form-control" path="descricao"/>
-				<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="descricao"></form:errors>
-			</div>
-			<div class="form-group">
 				<label>Preço: </label>
 				<form:input value="${bebida.valor}" type="number" step="0.01" min="0" cssClass="form-control" path="valor"/>
 				<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="valor"></form:errors>

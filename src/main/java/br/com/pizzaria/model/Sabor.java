@@ -94,5 +94,10 @@ public class Sabor {
 	public void setTipo(TipoSabor tipo) {
 		this.tipo = tipo;
 	}
+	
+	@Override
+	public String toString() {
+		return this.titulo;
+	}
 
 }

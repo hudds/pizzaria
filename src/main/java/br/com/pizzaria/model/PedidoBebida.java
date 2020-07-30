@@ -1,38 +1,30 @@
 package br.com.pizzaria.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="TB_PEDIDOS_DE_BEBIDAS")
-public class PedidoBebida implements ItemCarrinho{
+public class PedidoBebida extends ItemPedido implements ItemCarrinho{
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="ID")
-	private Integer id;
 	
 	@ManyToOne
 	@JoinColumn(name="BEBIDA_ID")
 	private Bebida bebida;
 	
-	@Column(name="QUANTIDADE")
-	private Integer quantidade;
-	
-	public Integer getId() {
-		return id;
+	public PedidoBebida() {
+		
 	}
 	
-	public void setId(Integer id) {
-		this.id = id;
+	public PedidoBebida(Bebida bebida, Integer quantidade) {
+		this.bebida = bebida;
+		super.setQuantidade(quantidade);
+		super.setDescricao(this.geraDescricao());
 	}
 	
 	public Bebida getBebida() {
@@ -44,28 +36,43 @@ public class PedidoBebida implements ItemCarrinho{
 	}
 	
 	@Override
-	public Integer getQuantidade() {
-		return quantidade;
+	public BigDecimal calculaValor() {
+		return this.bebida.getValor().multiply(new BigDecimal(getQuantidade()));
 	}
-	
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
-	}
-	
-	private BigDecimal calculaValor() {
-		return this.bebida.getValor().multiply(new BigDecimal(this.quantidade));
-	}
-	@Override
 	public String getTitulo() {
 		return this.bebida.getTitulo();
 	}
+	
 	@Override
-	public String getDescricao() {
-		return this.bebida.getDescricao();
+	public String geraDescricao() {
+		return this.bebida.getTitulo();
 	}
+
 	@Override
-	public BigDecimal getValor() {
-		return this.calculaValor();
+	public Boolean isEmpty() {
+		return (getQuantidade() == null ? true : getQuantidade() <= 0) || this.bebida == null;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(bebida, getId());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PedidoBebida other = (PedidoBebida) obj;
+		return Objects.equals(bebida, other.bebida) && Objects.equals(super.getId(), other.getId());
+	}
+
+	@Override
+	public boolean vazio() {
+		return (getQuantidade() == null ? true : getQuantidade() <= 0) || this.bebida == null;
 	}
 
 }

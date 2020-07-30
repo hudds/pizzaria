@@ -1,5 +1,7 @@
 package br.com.pizzaria.service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -25,6 +27,16 @@ public class PizzaService {
 
 	public List<Pizza> buscaPizzas() {
 		return pizzaDAO.buscaPizzas();
+	}
+	
+	public List<Pizza> buscaPizzasOrdenadasPeloTipoSabor(TipoSabor primeiro){
+		List<Pizza> pizzas = buscaPizzas();
+		pizzas.sort((p1, p2) -> {
+			Integer p1Value = p1.getTipoSabor() == primeiro ? 0 : 1;
+			Integer p2Value = p2.getTipoSabor() == primeiro ? 0 : 1;
+			return p1Value.compareTo(p2Value);
+		});
+		return pizzas;
 	}
 	
 	public List<Pizza> buscaPizzasPeloTipoSabor(TipoSabor tipoSabor) {

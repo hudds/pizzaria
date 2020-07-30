@@ -162,3 +162,6 @@ insert into TB_USUARIOS_ROLES (USUARIO_ID, AUTHORITY) values (1, 'ROLE_ADMIN');
 
 COMMIT;
 ```
+
+# Rodando a aplicação
+Basta abrir o projeto no Eclipse e rodar a classe ``src/main/java/br/com/pizzaria/PizzariaApplication.java`` e em seguida acessar localhost:8080.

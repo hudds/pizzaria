@@ -18,7 +18,6 @@ public class BebidaValidation implements Validator{
 	@Override
 	public void validate(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmpty(errors, "titulo", "field.required");
-		ValidationUtils.rejectIfEmpty(errors, "descricao", "field.required");
 		ValidationUtils.rejectIfEmpty(errors, "valor", "field.required");
 		
 		if(errors.hasErrors()) {

@@ -48,26 +48,7 @@ public class BebidaValidationTest {
 		
 	}
 	
-	@Test
-	public void validateDescricaoVazioTest() {
-		BebidaForm bebidaForm = createBebidaForm();
-		BebidaValidation bebidaValidation = new BebidaValidation();
-		Errors errors = createErrors(bebidaForm, "novaBebida");
-		
-		bebidaForm.setDescricao(null);
-		bebidaValidation.validate(bebidaForm, errors);
-		assertThat(errors.hasErrors()).isTrue();
-		assertThat(errors.getFieldError("descricao")).isNotNull();
-		
-		bebidaForm = createBebidaForm();
-		errors = createErrors(bebidaForm, "novaBebida");
-
-		bebidaForm.setDescricao("");
-		bebidaValidation.validate(bebidaForm, errors);
-		assertThat(errors.hasErrors()).isTrue();
-		assertThat(errors.getFieldError("descricao")).isNotNull();
-		
-	}
+	
 	
 	@Test
 	public void validateValorVazioTest() {
@@ -106,7 +87,6 @@ public class BebidaValidationTest {
 	public BebidaForm createBebidaForm() {
 		BebidaForm bebidaForm = new BebidaForm();
 		bebidaForm.setTitulo("Teste");
-		bebidaForm.setDescricao("teste");
 		bebidaForm.setValor(BigDecimal.TEN);
 		return bebidaForm;
 	}

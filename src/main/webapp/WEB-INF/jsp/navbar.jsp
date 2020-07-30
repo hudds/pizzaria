@@ -20,6 +20,10 @@
 			<li class= "nav-item">
 				<a class = "nav-link text-light navbar-link" href='<c:url value="/pizza"/>'>Pizzas</a>
 			</li>
+			<li class= "nav-item">
+				<a class = "nav-link text-light navbar-link" href='<c:url value="/pedido/fazerPedido"/>'>Fazer pedido</a>
+			</li>
+			
 			<sec:authorize access="hasRole('ADMIN')">
 				<li class= "nav-item">
 					<a class = "nav-link text-light navbar-link" href='<c:url value="/usuarios"/>'>Usuários</a>
@@ -30,6 +34,9 @@
 			</sec:authorize>
 		</ul>
 		<ul class="navbar-nav ml-auto">
+			<li class= "nav-item">
+				<a class = "nav-link text-light navbar-link" href='<c:url value="/pedido/carrinho"/>'>Carrinho</a>
+			</li>
 			<sec:authorize access="!isAuthenticated()">		
 				<li class= "nav-item">
 					<a class = "nav-link text-light navbar-link" href='<c:url value="/login"/>'>Login</a>

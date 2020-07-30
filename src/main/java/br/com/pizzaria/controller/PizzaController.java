@@ -87,7 +87,7 @@ public class PizzaController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView lista() {
 		ModelAndView modelAndView = new ModelAndView("pizza/listaPizzas");
-		modelAndView.addObject("pizzas", pizzaService.buscaPizzas());
+		modelAndView.addObject("pizzas", pizzaService.buscaPizzasOrdenadasPeloTipoSabor(TipoSabor.SALGADA));
 		return modelAndView;
 	}
 
