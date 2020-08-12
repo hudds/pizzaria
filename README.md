@@ -43,11 +43,11 @@ Para ter acesso a todas as funcionalidades da aplicação é necessário ter um 
 
 O script SQL abaixo cria a base de dados, as tabelas e o usuário administrador. 
 
-O nome de usuário é "admin" e a senha é "admin", caso queira mudar a senha, saiba que ela deve ser encriptada com a criptografia BCcrypt, que é a criptografia que a aplicação utiliza para as senhas.
+O nome de usuário é "admin" e a senha é "admin", caso queira mudar a senha, saiba que ela deve ser hasheada com a criptografia BCrypt, que é a criptografia que a aplicação utiliza para as senhas.
 
 ```
 START TRANSACTION;
-drop database if exists pizzaria ;
+drop database if exists pizzaria;
 create database pizzaria;
 use pizzaria;
 create table TB_ROLES (AUTHORITY varchar(20) primary key);
@@ -69,6 +69,8 @@ create table TB_USUARIOS (
     NOME_DE_USUARIO varchar(30) not null unique,
     SENHA varchar(300) not null,
     NOME varchar(100),
+    TELEFONE varchar(14),
+    CELULAR varchar(14),
     ENDERECO_ID int,
     foreign key (ENDERECO_ID) references TB_ENDERECOS(ID)
 );    
@@ -91,6 +93,7 @@ create table TB_PIZZAS (
 create table TB_PEDIDOS_DE_PIZZAS (
 	ID int primary key auto_increment,
     PIZZA_ID int,
+    DESCRICAO varchar(255),
     QUANTIDADE int,
     VALOR decimal(19,4),
     FOREIGN KEY (PIZZA_ID) REFERENCES TB_PIZZAS(ID)
@@ -106,24 +109,35 @@ create table TB_PEDIDOS_DE_PIZZAS_SABORES(
 create table TB_BEBIDAS(
 	ID int primary key auto_increment,
     TITULO varchar(100),
-    DESCRICAO varchar(200),
     VALOR decimal(19,4)
 );
 
 create table TB_PEDIDOS_DE_BEBIDAS (
 	ID int primary key auto_increment,
     BEBIDA_ID int,
+    DESCRICAO varchar(200),
     QUANTIDADE int,
     VALOR decimal(19,4),
     FOREIGN KEY (BEBIDA_ID) REFERENCES TB_BEBIDAS(ID)
 );
 
+CREATE TABLE TB_PAGAMENTOS (
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    FORMA_DE_PAGAMENTO VARCHAR(30) NOT NULL,
+    VALOR DECIMAL (19,4) NOT NULL,
+    VALOR_A_RECEBER DECIMAL(19,4)
+);
+
 create table TB_PEDIDOS (
-	ID int primary key auto_increment,
-    CLIENTE_ID int,
-    foreign key(CLIENTE_ID) references TB_USUARIOS(ID),
-    ESTAGIO_DO_PEDIDO varchar(50),
-    HORARIO_DO_PEDIDO DATETIME
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    CLIENTE_ID INT NOT NULL,
+    ENDERECO_ID INT NOT NULL,
+    ESTADO_DO_PEDIDO VARCHAR(50),
+    HORARIO_DO_PEDIDO DATETIME,
+    PAGAMENTO INT,
+    FOREIGN KEY(CLIENTE_ID) REFERENCES TB_USUARIOS(ID),
+    FOREIGN KEY(ENDERECO_ID) REFERENCES TB_ENDERECOS(ID),
+    FOREIGN KEY(PAGAMENTO) REFERENCES TB_PAGAMENTOS(ID)
 );
 
 create table TB_PEDIDO_PEDIDOS_DE_PIZZAS (
@@ -159,6 +173,41 @@ insert into TB_ROLES values ('ROLE_CLIENTE');
 insert into TB_USUARIOS (ID, EMAIL, NOME_DE_USUARIO, SENHA) values (0,'admin_pizzaria@gmail.com', 'admin', '$2y$12$SLOi8sJp4rvcO6NXyWQltOa4zFOa29PkY.sl1PUGLEGp8RZvHolXG');
 insert into TB_USUARIOS_ROLES (USUARIO_ID, AUTHORITY) values (1, 'ROLE_ADMIN');
 
+
+COMMIT;
+```
+Caso queira popular a base de dados com exemplos, rode o script sql abaixo:
+
+```
+USE pizzaria;
+START TRANSACTION;
+INSERT INTO TB_BEBIDAS (TITULO, VALOR) VALUES
+	('Coca-Cola 1L', 5.0000),
+    ('Guaraná Antarctica 1L', 4.0000),
+    ('Fanta Uva 1L', 4.4900),
+    ('Fanta Laranja 1L', 4.4900),
+    ('Sukita de Uva 1L', 3.9500),
+    ('Sukita de Laranja 1L', 3.9500);
+
+INSERT INTO TB_PIZZAS (TITULO, DESCRICAO, PRECO, TIPO_SABOR) VALUES 
+	('Pizza Pequena (25CM)', 'Pizza salgada de 25 centímetros de diâmetro.', 24.9000, 'SALGADA'),
+    ('Pizza Média (30CM)', 'Pizza salgada de 30 centímetros de diâmetro.', 31.9000, 'SALGADA'),
+	('Pizza Grande (35CM)', 'Pizza salgada de 35 centímetros de diâmetro.', 39.9000, 'SALGADA'),
+    ('Pizza Gigante (40CM)', 'Pizza salgada de 40 centímetros de diâmetro.', 44.9000, 'SALGADA'),
+    ('Pizza Pequena (25CM)', 'Pizza doce de 25 centímetros de diâmetro.', 14.9000, 'DOCE'),
+    ('Pizza Média (30CM)', 'Pizza doce de 30 centímetros de diâmetro.', 19.9000, 'DOCE'),
+    ('Pizza Grande (35CM)', 'Pizza doce de 35 centímetros de diâmetro.', 24.9000, 'DOCE'),
+    ('Pizza Gigante (40CM)', 'Pizza doce de 40 centímetros de diâmetro.', 29.9000, 'DOCE');
+
+INSERT INTO TB_SABORES (TITULO, DESCRICAO, TIPO) VALUES 
+	('Calabresa', 'Molho de tomate, queijo mussarela, calabresa, cebola e orégano.', 'SALGADA'),
+    ('4 queijos', 'Queijo mussarela, catupiry, provolone e parmesão e orégano.',  'SALGADA'),
+    ('Portuguesa', 'Molho de tomate, queijo mussarela, cebola, pimentão, ovo, calabresa, azeitona e orégano.','SALGADA'),
+    ('Napolitana', 'Molho de tomate, queijo mussarela, presunto e orégano.', 'SALGADA'),
+    ('Prestígio', 'Chocolate com côco.', 'DOCE'),
+    ('Maçã com Canela', 'Queijo mussarela, maçã e canela.', 'DOCE'),
+    ('Banana', 'Queijo mussarela, banana e canela.', 'DOCE'),
+    ('Chocolate com Morango', 'Chocolate com morango.', 'DOCE');
 
 COMMIT;
 ```

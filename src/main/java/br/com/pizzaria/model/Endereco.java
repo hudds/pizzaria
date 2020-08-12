@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.beans.BeanUtils;
+
 import br.com.caelum.stella.type.Estado;
 
 @Entity
@@ -41,6 +43,14 @@ public class Endereco {
 	
 	@Column(name="COMPLEMENTO")
 	private String complemento;
+
+	public Endereco() {
+		
+	}
+	
+	public Endereco(Endereco endereco) {
+		BeanUtils.copyProperties(endereco, this);
+	}
 
 	public Integer getId() {
 		return id;
@@ -78,6 +88,10 @@ public class Endereco {
 		return cep;
 	}
 
+	/**
+	 * Remove tudo o que não é dígito e atribui a propriedade cep.
+	 * @param cep - Cep a ser atribuído.
+	 */
 	public void setCep(String cep) {
 		this.cep = cep.replaceAll("[^\\d]", "");
 	}

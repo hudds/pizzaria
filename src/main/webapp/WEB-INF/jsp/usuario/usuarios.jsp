@@ -32,7 +32,7 @@
 					<sec:authorize access="hasRole('ADMIN')">
 						<td>
 							<a href="${pageContext.request.contextPath}/usuarios/roles/${usuario.id}">
-								<button>Editar pertmissões de usuário</button>
+								<button>Editar permissões de usuário</button>
 							</a>
 						</td>
 					</sec:authorize>

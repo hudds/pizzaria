@@ -11,7 +11,6 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.service.UsuarioService;
 
 @Configuration
@@ -26,7 +25,9 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 		CharacterEncodingFilter filter = new CharacterEncodingFilter("UTF-8");
 		http.addFilterBefore(filter, CsrfFilter.class);
 		http.authorizeRequests()
-		.antMatchers("/usuarios/cadastro").permitAll()
+		.antMatchers("/usuarios/cadastro/**").permitAll()
+		.antMatchers("/usuarios/info/**").authenticated()
+		.antMatchers("/usuarios/menu/**").authenticated()
 		.antMatchers("/usuarios/**").hasRole("ADMIN")
 		.antMatchers("/sabor/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/sabor/edit/**").hasRole("ADMIN")
@@ -36,12 +37,16 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 		.antMatchers("/bebida/edit/**").hasRole("ADMIN")
 		.antMatchers("/bebida/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/pedido/endereco/**").authenticated()
+		.antMatchers("/pedido/pagamento/**").authenticated()
+		.antMatchers("/pedido/resumo/**").authenticated()
+		.antMatchers("/pedido/confirma").authenticated()
+		.antMatchers("/pedido/detalhes/{id}/**").access("@checkPedidoUserId.check(authentication, #id)")
 		.antMatchers("/pizza/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/pizza/edit/**").hasRole("ADMIN")
 		.antMatchers("/pizza/delete/**").hasRole("ADMIN")
 		.antMatchers("/*").permitAll()
 		.and().formLogin().loginPage("/login").failureUrl("/login?status=bad_credentials")
-		.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
+		.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
 	}
 	
 	@Override

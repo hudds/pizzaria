@@ -5,7 +5,7 @@
 <c:set value="${pageContext.request.contextPath}" var="contextPath" scope="application"/>
 <c:url value="${contextPath}/resources/imagens/" var="linkImagens"></c:url>
 <header>
-	<nav class = "navbar navbar-expand-lg navbar-light bg-danger" style="font-size: 1.5em;">
+	<nav class = "navbar navbar-expand-lg navbar-light bg-danger main-navbar" style="font-size: 1.5em;">
 	<a class="navbar-brand mr-5" href="#">
 		<img alt="pizza" src="${linkImagens }favicon.png" width="70" height="70">
 	</a>
@@ -47,12 +47,12 @@
 			</sec:authorize>
 			<sec:authorize access="isAuthenticated()">
 				<li class= "nav-item">
-					<a class = "nav-link text-light" href='#'>
-						Logado como: <sec:authentication property="principal.username"/>
+					<a class = "nav-link text-light navbar-link" href='${contextPath}/usuarios/menu/info'>
+						Minha Conta
 					</a>
 				</li>		
 				<li class= "nav-item">
-					<a class = "nav-link text-light" href='<c:url value="/logout"/>'>Logout</a>
+					<a class = "nav-link text-light navbar-link" href='<c:url value="/logout"/>'>Logout</a>
 				</li>
 			</sec:authorize>
 		</ul>

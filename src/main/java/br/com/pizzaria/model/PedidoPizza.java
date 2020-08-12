@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -22,10 +18,10 @@ public class PedidoPizza extends ItemPedido implements ItemCarrinho{
 	
 	public static final Integer SABORES_QUANTIDADE_MAXIMA = 4;
 
-	@ManyToMany
+	@ManyToMany()
 	@JoinTable(name = "TB_PEDIDOS_DE_PIZZAS_SABORES", joinColumns = @JoinColumn(name = "PEDIDO_ID"), inverseJoinColumns = @JoinColumn(name = "SABOR_ID"))
 	private List<Sabor> sabores;
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name="PIZZA_ID")
 	private Pizza pizza;
 	

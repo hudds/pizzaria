@@ -15,6 +15,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import br.com.pizzaria.controller.HomeController;
 import br.com.pizzaria.dao.UsuarioDAO;
+import br.com.pizzaria.model.converter.StringToBigDecimalConverter;
 import br.com.pizzaria.model.converter.StringToRoleConverter;
 
 @Configuration
@@ -30,6 +31,7 @@ public class WebAppConfig implements WebMvcConfigurer {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addConverter(new StringToRoleConverter());
+		registry.addConverter(new StringToBigDecimalConverter());
 	}
 	
 	@Bean
@@ -45,10 +47,12 @@ public class WebAppConfig implements WebMvcConfigurer {
 	public ViewResolver viewResolver() {
 		return new InternalResourceViewResolver("/WEB-INF/jsp/", ".jsp");
 	}
-
+	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}
+	
+	
 
 }

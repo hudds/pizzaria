@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.model.Endereco;
 import br.com.pizzaria.model.Usuario;
-import br.com.pizzaria.model.form.EnderecoForm;
+import br.com.pizzaria.model.form.EnderecoEContatoForm;
 
 @Service
 @Transactional
@@ -24,13 +24,20 @@ public class UsuarioService implements UserDetailsService {
 	@Autowired
 	private EnderecoService enderecoService;
 
-	@Override
-	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-		return usuarioDAO.loadUserByUsername(usernameOrEmail);
+	public Usuario buscaPeloEmailOuNome(String usernameOrEmail) throws UsernameNotFoundException {
+		return (Usuario) usuarioDAO.buscaPeloEmailOuNome(usernameOrEmail);
+	}
+	
+	public Integer buscaIdPeloEmailOuNome(String usernameOrEmail) {
+		return usuarioDAO.buscaIdPeloEmailOuNome(usernameOrEmail);
 	}
 
 	public Usuario getUsuario(Integer id) {
-		return usuarioDAO.getUsuario(id);
+		return usuarioDAO.getUsuario(id, false);
+	}
+	
+	public Usuario getUsuarioComRoles(Integer id) {
+		return usuarioDAO.getUsuario(id, true);
 	}
 
 	public void grava(Usuario usuario) {
@@ -46,12 +53,27 @@ public class UsuarioService implements UserDetailsService {
 	}
 	
 	public void atualizaEndereco(Endereco endereco, Usuario usuario) {
-		System.out.println("estou atualizando endereco");
-		if(endereco.getId() == null) {
-			enderecoService.grava(endereco);
-		} 
+		enderecoService.grava(endereco);
 		usuario.setEndereco(endereco);
 		edita(usuario);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+		return usuarioDAO.getUserDetails(usernameOrEmail);
+	}
+
+	public void atualizaEnderecoEContato(EnderecoEContatoForm enderecoEContato, Usuario usuario) {
+		enderecoService.grava(enderecoEContato.getEndereco());
+		usuario.setEndereco(enderecoEContato.getEndereco());
+		usuario.setTelefone(enderecoEContato.getTelefone());
+		usuario.setCelular(enderecoEContato.getCelular());
+		edita(usuario);
+		
+	}
+	
+	public boolean emailExiste(String email) {
+		return usuarioDAO.buscaIdPeloEmail(email) != null;
 	}
 
 }

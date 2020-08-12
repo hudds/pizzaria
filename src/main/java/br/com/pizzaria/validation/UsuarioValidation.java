@@ -9,10 +9,11 @@ import org.springframework.validation.Validator;
 
 import br.com.pizzaria.model.form.UsuarioForm;
 import br.com.pizzaria.service.UsuarioService;
+import br.com.pizzaria.validation.util.SenhaUtil;
 
 public class UsuarioValidation implements Validator {
 
-	private static final String REGEX_EMAIL_VALIDO = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+	public static final String REGEX_EMAIL_VALIDO = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 	private UsuarioService usuarioService;
 	
 	public UsuarioValidation(UsuarioService usuarioService) {
@@ -62,7 +63,7 @@ public class UsuarioValidation implements Validator {
 			errors.rejectValue("email", "field.email.existe");
 		}
 		
-		if(usuario.getSenha().length() < 8) {
+		if(!SenhaUtil.senhaForte(usuario.getSenha())) {
 			errors.rejectValue("senha", "field.senha.fraca");
 		}
 		
@@ -74,7 +75,7 @@ public class UsuarioValidation implements Validator {
 	
 	private boolean nomeDeUsuarioOuEmailExiste(String nomeDeUsuarioOuEmail) {
 		try {
-			usuarioService.loadUserByUsername(nomeDeUsuarioOuEmail);
+			usuarioService.buscaPeloEmailOuNome(nomeDeUsuarioOuEmail);
 			return true;
 		} catch(UsernameNotFoundException e) {
 			return false;

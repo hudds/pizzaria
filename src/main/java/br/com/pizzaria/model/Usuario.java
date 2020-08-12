@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,9 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.JoinFormula;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -54,7 +50,7 @@ public class Usuario implements UserDetails {
 	inverseJoinColumns = @JoinColumn(name="PEDIDO_ID"))
 	private List<Pedido> pedidos;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "TB_USUARIOS_ROLES", 
 	joinColumns = @JoinColumn(name = "USUARIO_ID"),
 	inverseJoinColumns = @JoinColumn(name= "AUTHORITY"))
@@ -66,6 +62,13 @@ public class Usuario implements UserDetails {
 	@OneToOne
 	@JoinColumn(name="ENDERECO_ID")
 	private Endereco endereco;
+	
+	@Column(name = "TELEFONE")
+	private String telefone;
+	
+	@Column(name = "CELULAR")
+	private String celular;
+	
 	
 	public Usuario() {
 		this.roles =  new HashSet<Role>();
@@ -176,6 +179,22 @@ public class Usuario implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public String getCelular() {
+		return celular;
+	}
+
+	public void setCelular(String celular) {
+		this.celular = celular;
 	}
 
 }
