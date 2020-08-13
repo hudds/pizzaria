@@ -1,5 +1,7 @@
 package br.com.pizzaria.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -74,6 +76,13 @@ public class PedidoDAO {
 		query.setParameter("pId", pedidoId);
 		query.setParameter("pUId", usuarioId);
 		return query.getSingleResult();
+	}
+
+	public List<Pedido> buscaPedidosPeloUsuario(Integer usuarioId) {
+		String jpql = "select p from Pedido p where p.cliente.id = :pUId";
+		TypedQuery<Pedido> query = em.createQuery(jpql, Pedido.class);
+		query.setParameter("pUId", usuarioId);
+		return query.getResultList();
 	}
 	
 }

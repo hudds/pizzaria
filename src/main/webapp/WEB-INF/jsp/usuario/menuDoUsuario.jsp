@@ -13,10 +13,13 @@
 				<li class= "nav-item">
 					<a class = "nav-link navbar-link" href="${contextPath}/usuarios/menu/info">Informações de usuário</a>
 				</li>
+				<li class= "nav-item">
+					<a class = "nav-link navbar-link" href="${contextPath}/usuarios/menu/pedidos">Seus pedidos</a>
+				</li>
 			</ul>
 		</nav>
 		<div class="container">
-			<jsp:include page="/WEB-INF/jsp/usuario/partial/${option}.jsp"/>
+			<jsp:include page="/WEB-INF/jsp/usuario/menu-options/${option}.jsp"/>
 		</div>
 	</div>
 </tags:pageTemplate>

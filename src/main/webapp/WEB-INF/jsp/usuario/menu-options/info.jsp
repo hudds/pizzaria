@@ -7,7 +7,9 @@
 <div class="p-3 bg-light border rounded">
 	<h1 class="mb-5">Informações do usuário</h1>
 	<div class="container mt-4">
-		<h2>Informações de login</h2>
+		<h2 class="mt-2">${usuario.nome}</h2>
+		<a class="btn btn-link" href="${contextPath}/usuarios/info/nome">Alterar nome</a>
+		<h2 class="mt-4">Informações de login</h2>
 		<table class = "table table-borderless m-3 mt-4 bg-white w-75">
 			<tbody>
 				<tr>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.model.Endereco;
+import br.com.pizzaria.model.Pedido;
 import br.com.pizzaria.model.Usuario;
 import br.com.pizzaria.model.form.EnderecoEContatoForm;
 
@@ -74,6 +76,17 @@ public class UsuarioService implements UserDetailsService {
 	
 	public boolean emailExiste(String email) {
 		return usuarioDAO.buscaIdPeloEmail(email) != null;
+	}
+
+	public void addPedido(Usuario usuario, Pedido pedido) {
+		try {
+			usuario.addPedido(pedido);
+		}catch (LazyInitializationException e) {
+			usuario = getUsuario(usuario.getId());
+			usuario.addPedido(pedido);
+		}
+		edita(usuario);
+		
 	}
 
 }

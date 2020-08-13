@@ -1,5 +1,6 @@
 package br.com.pizzaria.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -196,5 +197,14 @@ public class Usuario implements UserDetails {
 	public void setCelular(String celular) {
 		this.celular = celular;
 	}
+
+	public void addPedido(Pedido pedido) {
+		if(this.pedidos == null) {
+			pedidos = new ArrayList<Pedido>();
+		}
+		pedidos.add(pedido);
+		
+	}
+
 
 }

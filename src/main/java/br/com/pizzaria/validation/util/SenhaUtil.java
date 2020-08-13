@@ -4,6 +4,6 @@ public class SenhaUtil {
 
 	
 	public static boolean senhaForte(String senha) {
-		return senha.length() > 8;
+		return senha.length() >= 8;
 	}
 }

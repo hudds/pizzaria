@@ -1,5 +1,7 @@
 package br.com.pizzaria.service;
 
+import java.util.List;
+
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
@@ -16,6 +18,8 @@ public class PedidoService {
 
 	@Autowired
 	private PedidoDAO pedidoDAO;
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	public void pedido(Pedido pedido) {
 		pedidoDAO.grava(pedido);
@@ -23,6 +27,7 @@ public class PedidoService {
 
 	public void grava(Pedido pedido) {
 		pedidoDAO.grava(pedido);
+		usuarioService.addPedido(pedido.getCliente(), pedido);
 		
 	}
 
@@ -42,6 +47,11 @@ public class PedidoService {
 			return false;
 		}
 		
+	}
+
+	public List<Pedido> buscaPedidosPeloUsuario(Integer usuarioId) {
+
+		return pedidoDAO.buscaPedidosPeloUsuario(usuarioId);
 	}
 	
 	

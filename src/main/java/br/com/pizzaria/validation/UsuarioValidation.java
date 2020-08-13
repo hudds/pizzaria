@@ -9,6 +9,7 @@ import org.springframework.validation.Validator;
 
 import br.com.pizzaria.model.form.UsuarioForm;
 import br.com.pizzaria.service.UsuarioService;
+import br.com.pizzaria.validation.util.NameValidationUtil;
 import br.com.pizzaria.validation.util.SenhaUtil;
 
 public class UsuarioValidation implements Validator {
@@ -28,23 +29,14 @@ public class UsuarioValidation implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nome", "field.required");
+		UsuarioForm usuario = (UsuarioForm) target;
+		
+		NameValidationUtil.validate(usuario.getNome(), errors, "nome");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nomeDeUsuario", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "senha", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmacaoSenha", "field.required");
-
-		UsuarioForm usuario = (UsuarioForm) target;
-		
-		if (usuario.getNome().split(" ").length < 2) {
-			errors.rejectValue("nome", "field.nome.incompleto");
-		}
-		
-		Pattern regexNaoEhLetra = Pattern.compile("[^A-zÀ-ÿ\\s]|[\\[\\]^`_\\\\]");
-		if (regexNaoEhLetra.matcher(usuario.getNome()).find()) {
-			errors.rejectValue("nome", "field.nome.invalido");
-		}
-		
+				
 		Pattern regexNaoEhLetraOuNumero = Pattern.compile("[^A-z\\d]");
 		if (regexNaoEhLetraOuNumero.matcher(usuario.getNomeDeUsuario()).find()) {
 			errors.rejectValue("nomeDeUsuario", "field.nomeDeUsuario.invalido");
