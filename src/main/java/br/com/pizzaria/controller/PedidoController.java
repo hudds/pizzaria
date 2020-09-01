@@ -21,8 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.pizzaria.builder.PedidoBuilder;
+import br.com.pizzaria.controller.formatter.StringToLocalDateTimeFormatter;
 import br.com.pizzaria.controller.util.ValidadorDeEstadoParaPedido;
 import br.com.pizzaria.model.Carrinho;
+import br.com.pizzaria.model.EstadoPedido;
 import br.com.pizzaria.model.FormaDePagamento;
 import br.com.pizzaria.model.ItemPedido;
 import br.com.pizzaria.model.Pagamento;
@@ -32,6 +34,7 @@ import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
 import br.com.pizzaria.model.Usuario;
 import br.com.pizzaria.model.form.PedidoPizzaForm;
+import br.com.pizzaria.query.PedidoQuery;
 import br.com.pizzaria.service.BebidaService;
 import br.com.pizzaria.service.PedidoService;
 import br.com.pizzaria.service.PizzaService;
@@ -57,6 +60,12 @@ public class PedidoController {
 	@Autowired
 	private Carrinho carrinho;
 
+	
+	@InitBinder(value={"buscaPedido"})
+	public void localDateTimeConverter(WebDataBinder webDataBinder) {
+		webDataBinder.addCustomFormatter(new StringToLocalDateTimeFormatter("dd/MM/yyyy HH'h':mm"));
+	}
+	
 	@InitBinder(value = { "novoPedidoPizza" })
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(new PedidoPizzaValidation(pizzaService, saborService));
@@ -192,6 +201,15 @@ public class PedidoController {
 	public ModelAndView paginaDeConclusao(@PathVariable("id") Integer id, Authentication authentication) {
 		ModelAndView modelAndView = new ModelAndView("pedido/detalhes");
 		modelAndView.addObject("pedido", pedidoService.buscaComItens(id));
+		return modelAndView;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path= {"/lista"})
+	public ModelAndView pedidos(@ModelAttribute("buscaPedido")PedidoQuery busca) {
+		ModelAndView modelAndView = new ModelAndView("pedido/pedidos");
+		modelAndView.addObject("pedidos", pedidoService.buscaPedidos(busca));
+		modelAndView.addObject("buscaPedido", busca);
+		modelAndView.addObject("estadosPedido", EstadoPedido.values());
 		return modelAndView;
 	}
 

@@ -159,8 +159,14 @@ public class EnderecoEContatoValidationTest {
 	@Test
 	public void testaEnderecoNumeroInvalido() {
 		EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(1);
-		enderecoEContato.getEndereco().setNumero(-1);
+		enderecoEContato.getEndereco().setNumero("aaaaaaaaaaaaaaa");
 		Errors errors = validate(enderecoEContato);
+		assertThat(errors.hasErrors()).isTrue();
+		assertThat(errors.getFieldError("endereco.numero")).isNotNull();
+		
+		enderecoEContato = buildEnderecoEContatoForm(1);
+		enderecoEContato.getEndereco().setNumero("aaaaa2222aaaaaaaaaa");
+		errors = validate(enderecoEContato);
 		assertThat(errors.hasErrors()).isTrue();
 		assertThat(errors.getFieldError("endereco.numero")).isNotNull();
 	}
@@ -185,7 +191,7 @@ public class EnderecoEContatoValidationTest {
 		endereco.setComplemento("Complemento " + n);
 		endereco.setEstado(Estado.RJ);
 		endereco.setLogradouro("Logradouro " + n);
-		endereco.setNumero(n);
+		endereco.setNumero(Integer.valueOf(n).toString());
 		return endereco;
 	}
 

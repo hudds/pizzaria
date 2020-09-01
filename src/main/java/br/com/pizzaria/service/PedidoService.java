@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.pizzaria.dao.PedidoDAO;
 import br.com.pizzaria.model.Pedido;
+import br.com.pizzaria.query.PedidoQuery;
 
 @Service
 @Transactional
@@ -20,6 +21,8 @@ public class PedidoService {
 	private PedidoDAO pedidoDAO;
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	
 	
 	public void pedido(Pedido pedido) {
 		pedidoDAO.grava(pedido);
@@ -53,6 +56,12 @@ public class PedidoService {
 
 		return pedidoDAO.buscaPedidosPeloUsuario(usuarioId);
 	}
+
+	public List<Pedido> buscaPedidos() {
+		return pedidoDAO.buscaPedidos();
+	}
 	
-	
+	public List<Pedido> buscaPedidos(PedidoQuery pedidoQuery) {
+		return pedidoDAO.buscaPedidos(pedidoQuery);
+	}
 }

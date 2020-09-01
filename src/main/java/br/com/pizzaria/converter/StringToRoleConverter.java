@@ -1,4 +1,4 @@
-package br.com.pizzaria.model.converter;
+package br.com.pizzaria.converter;
 
 import org.springframework.core.convert.converter.Converter;
 

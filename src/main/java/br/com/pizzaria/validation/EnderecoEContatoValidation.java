@@ -74,8 +74,8 @@ public class EnderecoEContatoValidation implements Validator {
 	}
 	
 	private void validaNumero(EnderecoEContatoForm enderecoEContatoForm, Errors errors) {
-		Integer numero = enderecoEContatoForm.getEndereco().getNumero();
-		if(numero < 0) {
+		String numero = enderecoEContatoForm.getEndereco().getNumero();
+		if(numero.length() > 10 || numero.replaceAll("[^\\d]", "").isEmpty()) {
 			errors.rejectValue("endereco.numero", "endereco.numero.invalid");
 		}
 	}

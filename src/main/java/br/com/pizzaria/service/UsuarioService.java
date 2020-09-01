@@ -34,7 +34,7 @@ public class UsuarioService implements UserDetailsService {
 		return usuarioDAO.buscaIdPeloEmailOuNome(usernameOrEmail);
 	}
 
-	public Usuario getUsuario(Integer id) {
+	public Usuario buscaUsuario(Integer id) {
 		return usuarioDAO.getUsuario(id, false);
 	}
 	
@@ -82,7 +82,7 @@ public class UsuarioService implements UserDetailsService {
 		try {
 			usuario.addPedido(pedido);
 		}catch (LazyInitializationException e) {
-			usuario = getUsuario(usuario.getId());
+			usuario = buscaUsuario(usuario.getId());
 			usuario.addPedido(pedido);
 		}
 		edita(usuario);

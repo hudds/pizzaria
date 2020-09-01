@@ -36,7 +36,7 @@ public class Endereco {
 	private String cep;
 	
 	@Column(name="NUMERO")
-	private Integer numero;
+	private String numero;
 	
 	@Column(name="LOGRADOURO")
 	private String logradouro;
@@ -96,11 +96,11 @@ public class Endereco {
 		this.cep = cep.replaceAll("[^\\d]", "");
 	}
 
-	public Integer getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(Integer numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 

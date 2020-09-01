@@ -44,7 +44,7 @@ public class EnderecoServiceTest {
 		
 		// persiste enderecos diferentes
 		endereco = buildEndereco(n);
-		endereco.setNumero(n+1);
+		endereco.setNumero(Integer.valueOf(n+1).toString());
 		assertThat(enderecoService.grava(endereco)).isTrue();
 		assertThat(entityManager.find(Endereco.class, endereco.getId())).isNotNull();
 	}
@@ -57,7 +57,7 @@ public class EnderecoServiceTest {
 		endereco.setComplemento("Complemento " + n);
 		endereco.setEstado(Estado.RJ);
 		endereco.setLogradouro("Logradouro " + n);
-		endereco.setNumero(n);
+		endereco.setNumero(Integer.valueOf(n).toString());
 		return endereco;
 	}
 	

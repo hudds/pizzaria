@@ -31,8 +31,13 @@
 					</td>
 					<sec:authorize access="hasRole('ADMIN')">
 						<td>
-							<a href="${pageContext.request.contextPath}/usuarios/roles/${usuario.id}">
-								<button>Editar permissões de usuário</button>
+							<a class="btn-link" href="${pageContext.request.contextPath}/usuarios/roles/${usuario.id}">
+								Editar permissões de usuário
+							</a>
+						</td>
+						<td>
+							<a class="btn-link" href="${pageContext.request.contextPath}/usuarios/detalhes/${usuario.id}">
+								Mais detalhes
 							</a>
 						</td>
 					</sec:authorize>

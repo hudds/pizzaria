@@ -27,7 +27,7 @@
 		<a class="btn btn-link" href="${contextPath}/usuarios/info/senha">Alterar senha</a>
 	</div>
 	<div class="container mt-5">
-		<h2>Endereço de entrega e contato</h2>
+		<h2>Endereço de entrega</h2>
 		<c:if test="${empty usuario.endereco}">
 			<p>Você não cadastrou um endereço ainda.</p> 
 			<a class="btn-link" href="${contextPath}/usuarios/info/endereco-telefone?redirectAfter=%2Fusuarios%2Fmenu%2Finfo&intention=CREATE">Clique aqui para cadastrar um endereço.</a>
@@ -65,6 +65,17 @@
 							<td class="align-middle">${usuario.endereco.complemento}</td>
 						</tr>
 					</c:if>
+				</tbody>
+			</table>
+		</c:if>
+		<h2 class="mt-2">Telefone</h2>
+		<c:if test="${empty usuario.telefone and empty usuario.celular}">
+			<p>Você não cadastrou nenhum número de telefone ainda.</p> 
+			<a class="btn-link" href="${contextPath}/usuarios/info/endereco-telefone?redirectAfter=%2Fusuarios%2Fmenu%2Finfo&intention=CREATE">Clique aqui para cadastrar um telefone.</a>
+		</c:if>
+		<c:if test="${not empty usuario.telefone or not empty usuario.celular}">
+			<table class="table table-borderless m-3 mt-4 bg-white w-75">
+				<tbody>
 					<c:if test="${not empty usuario.telefone}">
 						<tr>
 							<td class="align-middle">Telefone fixo: </td>
@@ -84,15 +95,4 @@
 	</div>
 </div>
 <script src="${pathJs}vanilla-masker.js" type="text/javascript"></script>
-<script>
-	var cep = document.querySelector(".cep")
-	var celular = document.querySelector(".celular")
-	var telefone= document.querySelector(".telefone")
-	cep.innerText = VMasker.toPattern(cep.innerText, "99999-999")
-	if(celular != null){		
-		celular.innerText = VMasker.toPattern(celular.innerText, "(99) 99999-9999")
-	}
-	if(telefone != null){		
-		telefone.innerText = VMasker.toPattern(telefone.innerText, "(99) 9999-9999")
-	}
-</script>
+<script src="${pathJs}apply-masks.js" type="text/javascript"></script>

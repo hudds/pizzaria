@@ -74,7 +74,7 @@
 							<p class="card-text">
 								${pedido.endereco.logradouro}, ${pedido.endereco.numero} <br>
 								Bairro: ${pedido.endereco.bairro} <br>
-								CEP: ${pedido.endereco.cep} <br>
+								CEP: <span class="cep">${pedido.endereco.cep}</span> <br>
 								<c:if test="${not pedido.endereco.complemento.trim().isEmpty()}">
 									Complemento: ${pedido.endereco.complemento}
 								</c:if>
@@ -92,7 +92,24 @@
 						</div>
 					</div>
 				</div>
+				<sec:authorize access="hasRole('ADMIN')">
+					<div class="card w-100 mt-5">
+						<div class="card-body">
+							<h5 class="card-title">Cliente</h5>
+							<p>Nome: ${pedido.cliente.nome}</p>
+							<p>E-mail: ${pedido.cliente.email}</p>
+							<c:if test="${not empty pedido.cliente.telefone }">
+								<p>Telefone: <span class="telefone">${pedido.cliente.telefone}</span></p>
+							</c:if>
+							<c:if test="${not empty pedido.cliente.celular }">
+								<p>Telefone celular: <span class="celular">${pedido.cliente.celular}</span></p>
+							</c:if>
+						</div>
+					</div>
+				</sec:authorize>
 			</div>
 		</div>
+		<script src="${pathJs}vanilla-masker.js" type="text/javascript"></script>
+		<script src="${pathJs}apply-masks.js" type="text/javascript"></script>
 </tags:pageTemplate>
   

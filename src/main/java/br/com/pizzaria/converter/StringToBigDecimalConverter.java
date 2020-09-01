@@ -1,4 +1,4 @@
-package br.com.pizzaria.model.converter;
+package br.com.pizzaria.converter;
 
 import java.math.BigDecimal;
 

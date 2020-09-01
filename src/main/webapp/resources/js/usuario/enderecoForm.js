@@ -1,29 +1,17 @@
-const maskedForm = document.querySelector(".masks-form");
-
 const cepInput = document.querySelector(".mask-cep");
 const estadoInput = document.querySelector(".input-estado");
 const cidadeInput = document.querySelector(".input-cidade");
 const bairroInput = document.querySelector(".input-bairro");
 const logradouroInput = document.querySelector(".input-logradouro");
 const complementoInput = document.querySelector(".input-complemento");
-const telInput = document.querySelector(".mask-tel");
-const celInput = document.querySelector(".mask-cel");
 
 const cepPattern = "99999-999";
-const telPattern = "(99) 9999-9999";
-const celPattern = "(99) 99999-9999";
 
 VMasker(cepInput).maskPattern(cepPattern)
-VMasker(telInput).maskPattern(telPattern)
-VMasker(celInput).maskPattern(celPattern);
 
 cepInput.addEventListener("focusout", function(e) {
     var cep = cepInput.value.replace(/[^\d]/g, "")
     buscaEndereco(cep)
-})
-
-maskedForm.addEventListener("submit", function(e){
-    maskedForm.querySelectorAll(".masked").forEach((input, i, inputs) => VMasker(input).unMask())
 })
 
 function buscaEndereco(cep){

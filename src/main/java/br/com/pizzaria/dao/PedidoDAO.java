@@ -1,6 +1,7 @@
 package br.com.pizzaria.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.pizzaria.model.Pedido;
+import br.com.pizzaria.query.PedidoQuery;
 
 @Repository
 public class PedidoDAO {
@@ -82,6 +84,17 @@ public class PedidoDAO {
 		String jpql = "select p from Pedido p where p.cliente.id = :pUId";
 		TypedQuery<Pedido> query = em.createQuery(jpql, Pedido.class);
 		query.setParameter("pUId", usuarioId);
+		return query.getResultList();
+	}
+
+	public List<Pedido> buscaPedidos() {
+		return em.createQuery("select p from Pedido p", Pedido.class).getResultList();
+	}
+
+	public List<Pedido> buscaPedidos(PedidoQuery pedidoQuery) {
+		TypedQuery<Pedido> query = em.createQuery(pedidoQuery.createJPQL(), Pedido.class);
+		Map<String, Object> parameters = pedidoQuery.getNamedParameters();
+		parameters.keySet().forEach(k -> query.setParameter(k, parameters.get(k)));
 		return query.getResultList();
 	}
 	

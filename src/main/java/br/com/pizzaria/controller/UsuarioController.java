@@ -1,13 +1,9 @@
 package br.com.pizzaria.controller;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
@@ -93,7 +88,7 @@ public class UsuarioController {
 
 	@RequestMapping(method = RequestMethod.POST, path = { "/roles" })
 	public String editaRoles(Usuario usuario) {
-		usuarioService.getUsuario(usuario.getId()).setRoles(usuario.getRoles());
+		usuarioService.buscaUsuario(usuario.getId()).setRoles(usuario.getRoles());
 		return "redirect:roles/" + usuario.getId();
 	}
 
@@ -216,6 +211,13 @@ public class UsuarioController {
 		usuario.setNome(novoNome);
 		usuarioService.edita(usuario);
 		return new ModelAndView("redirect:/usuarios/menu/info");
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path= {"detalhes/{id}"})
+	public ModelAndView detalhesDoUsuario(@PathVariable("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView("usuario/detalhesDoUsuario");
+		modelAndView.addObject("usuario", usuarioService.buscaUsuario(id));
+		return modelAndView;
 	}
 
 }

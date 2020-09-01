@@ -63,7 +63,7 @@
 					</div>
 					<div class="form-group">
 						<label>Número: </label>
-						<form:input type="number" step="1" min="1" cssClass="form-control input-numero" path="endereco.numero"/>
+						<form:input type="text" cssClass="form-control input-numero" path="endereco.numero"/>
 						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="endereco.numero"></form:errors>
 					</div>
 					<div class="form-group">
@@ -93,5 +93,7 @@
 	</div>
 	<script type="text/javascript" src="${pathJs}vanilla-masker.js"></script>
 	<script type="text/javascript" src="${pathJs}usuario/enderecoForm.js"></script>
+	<script type="text/javascript" src="${pathJs}usuario/telefoneForm.js"></script>
+	<script type="text/javascript" src="${pathJs}usuario/unmask-form.js"></script>
 </tags:pageTemplate>
   
