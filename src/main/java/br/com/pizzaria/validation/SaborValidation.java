@@ -4,14 +4,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.SaborForm;
+import br.com.pizzaria.model.dto.SaborFormDTO;
 
 public class SaborValidation implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
 		// TODO Auto-generated method stub
-		return SaborForm.class.isAssignableFrom(clazz);
+		return SaborFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override

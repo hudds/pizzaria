@@ -1,7 +1,7 @@
 package br.com.pizzaria.model;
 
 public enum EstadoPedido {
-	CONCLUIDO("Concluído"), EM_PREPARO("Em preparo"), SAIU_PARA_ENTREGA("Saiu para a entrega");
+	CONCLUIDO("Concluído"), PREPARANDO("Preparando"), ENVIADO("Enviado"), REGISTRADO("Registrado");
 
 	private final String value;
 	
@@ -12,5 +12,5 @@ public enum EstadoPedido {
 	public String getValue() {
 		return value;
 	}
-
+	
 }

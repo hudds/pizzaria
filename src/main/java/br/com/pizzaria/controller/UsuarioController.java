@@ -17,14 +17,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
 import br.com.caelum.stella.type.Estado;
+import br.com.pizzaria.controller.contracts.UsuarioEditRoleDTO;
 import br.com.pizzaria.controller.util.EnderecoEContatoFormParams;
 import br.com.pizzaria.controller.util.FormIntention;
 import br.com.pizzaria.dao.RoleDAO;
 import br.com.pizzaria.model.Role;
 import br.com.pizzaria.model.Usuario;
-import br.com.pizzaria.model.form.EnderecoEContatoForm;
-import br.com.pizzaria.model.form.NovaSenhaForm;
-import br.com.pizzaria.model.form.UsuarioForm;
+import br.com.pizzaria.model.dto.EnderecoEContatoFormDTO;
+import br.com.pizzaria.model.dto.NovaSenhaFormDTO;
+import br.com.pizzaria.model.dto.UsuarioFormDTO;
+import br.com.pizzaria.security.util.CurrentUserGetter;
 import br.com.pizzaria.service.PedidoService;
 import br.com.pizzaria.service.UsuarioService;
 import br.com.pizzaria.validation.EmailValidation;
@@ -87,20 +89,22 @@ public class UsuarioController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, path = { "/roles" })
-	public String editaRoles(Usuario usuario) {
-		usuarioService.buscaUsuario(usuario.getId()).setRoles(usuario.getRoles());
+	public String editaRoles(UsuarioEditRoleDTO usuarioEditRole) {
+		Usuario usuario = usuarioService.buscaUsuario(usuarioEditRole.getId());
+		usuario.setRoles(usuarioEditRole.getRoles());
+		usuarioService.edita(usuario);
 		return "redirect:roles/" + usuario.getId();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = { "/cadastro" })
-	public ModelAndView cadastroForm(@ModelAttribute("novoUsuario") UsuarioForm novoUsuario) {
+	public ModelAndView cadastroForm(@ModelAttribute("novoUsuario") UsuarioFormDTO novoUsuario) {
 		ModelAndView modelAndView = new ModelAndView("usuario/formCadastro");
 		modelAndView.addObject("usuario", novoUsuario);
 		return modelAndView;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, path = { "/cadastro" })
-	public ModelAndView cadastra(@ModelAttribute("novoUsuario") @Valid UsuarioForm novoUsuario, BindingResult result,
+	public ModelAndView cadastra(@ModelAttribute("novoUsuario") @Valid UsuarioFormDTO novoUsuario, BindingResult result,
 			RedirectAttributes attributes) {
 		if (result.hasErrors()) {
 			return cadastroForm(novoUsuario);
@@ -116,7 +120,7 @@ public class UsuarioController {
 	@RequestMapping(method = RequestMethod.GET, path = { "/menu/{option}" })
 	public ModelAndView menu(@PathVariable(name="option", required = true) String option, Authentication authentication) {
 		ModelAndView modelAndView = new ModelAndView("usuario/menuDoUsuario");
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		if(option.equals("pedidos")) {
 			modelAndView.addObject("pedidos", pedidoService.buscaPedidosPeloUsuario(usuario.getId()));
 		}
@@ -124,12 +128,14 @@ public class UsuarioController {
 		return modelAndView;
 	}
 
+	
+
 	@RequestMapping(path = { "/info/endereco-telefone" }, method = RequestMethod.GET)
-	public ModelAndView enderecoForm(Authentication authentication, EnderecoEContatoForm enderecoEContato,
+	public ModelAndView enderecoForm(Authentication authentication, EnderecoEContatoFormDTO enderecoEContato,
 			EnderecoEContatoFormParams params) {
 		ModelAndView modelAndView = new ModelAndView("usuario/enderecoForm");
 		if (!enderecoEContato.isRejected()) {
-			Usuario usuario = (Usuario) authentication.getPrincipal();
+			Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 			enderecoEContato.setEndereco(usuario.getEndereco());
 			enderecoEContato.setTelefone(usuario.getTelefone());
 			enderecoEContato.setCelular(usuario.getCelular());
@@ -146,7 +152,7 @@ public class UsuarioController {
 
 	@RequestMapping(path = { "/info/endereco-telefone" }, method = RequestMethod.POST)
 	public ModelAndView confirmarEndereco(
-			@ModelAttribute("enderecoEContato") @Valid EnderecoEContatoForm enderecoEContato,
+			@ModelAttribute("enderecoEContato") @Valid EnderecoEContatoFormDTO enderecoEContato,
 			BindingResult bindingResult, Authentication authentication, EnderecoEContatoFormParams params) {
 		ModelAndView modelAndView = new ModelAndView(
 				"redirect:" + (params.getRedirectAfter() == null ? "/usuarios/endereco" : params.getRedirectAfter()));
@@ -154,7 +160,7 @@ public class UsuarioController {
 			enderecoEContato.setRejected(true);
 			return enderecoForm(authentication, enderecoEContato, params);
 		}
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		usuarioService.atualizaEnderecoEContato(enderecoEContato, usuario);
 		return modelAndView;
 	}
@@ -171,25 +177,25 @@ public class UsuarioController {
 		if (bindingResult.hasErrors()) {
 			return formNovoEmail(email);
 		}
-		Usuario usuario = usuarioService.buscaPeloEmailOuNome(authentication.getName());
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		usuario.setEmail(email);
 		usuarioService.edita(usuario);
 		return new ModelAndView("redirect:/usuarios/menu/info");
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path= {"info/senha"})
-	public ModelAndView editarSenhaForm(NovaSenhaForm novaSenha) {
+	public ModelAndView editarSenhaForm(NovaSenhaFormDTO novaSenha) {
 		ModelAndView modelAndView = new ModelAndView("usuario/formNovaSenha");
 		modelAndView.addObject("novaSenha", novaSenha);
 		return modelAndView;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path= {"info/senha"})
-	public ModelAndView editarSenha(@ModelAttribute("novaSenha") @Valid NovaSenhaForm novaSenha, BindingResult bindingResult, Authentication authentication) {
+	public ModelAndView editarSenha(@ModelAttribute("novaSenha") @Valid NovaSenhaFormDTO novaSenha, BindingResult bindingResult, Authentication authentication) {
 		if(bindingResult.hasErrors()) {
 			return editarSenhaForm(novaSenha);
 		}
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		usuario.setSenha(novaSenha.getSenhaNovaEncoded());
 		usuarioService.edita(usuario);
 		return new ModelAndView("redirect:/logout");
@@ -207,7 +213,7 @@ public class UsuarioController {
 		if(bindingResult.hasErrors()) {
 			return editarNomeForm(novoNome);
 		}
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		usuario.setNome(novoNome);
 		usuarioService.edita(usuario);
 		return new ModelAndView("redirect:/usuarios/menu/info");

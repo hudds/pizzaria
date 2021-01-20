@@ -5,20 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name="TB_PEDIDOS_DE_PIZZAS")
-public class PedidoPizza extends ItemPedido implements ItemCarrinho{
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class PedidoPizza extends ItemPedido{
 	
 	public static final Integer SABORES_QUANTIDADE_MAXIMA = 4;
 
-	@ManyToMany()
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "TB_PEDIDOS_DE_PIZZAS_SABORES", joinColumns = @JoinColumn(name = "PEDIDO_ID"), inverseJoinColumns = @JoinColumn(name = "SABOR_ID"))
 	private List<Sabor> sabores;
 	@ManyToOne()
@@ -71,10 +78,6 @@ public class PedidoPizza extends ItemPedido implements ItemCarrinho{
 		this.pizza = pizza;
 	}
 
-	@Override
-	public Boolean isEmpty() {
-		return (super.getQuantidade() == null ? true : super.getQuantidade() <= 0) || this.pizza == null ;
-	}
 
 	@Override
 	public int hashCode() {

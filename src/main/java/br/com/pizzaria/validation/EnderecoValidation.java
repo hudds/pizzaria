@@ -4,13 +4,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.EnderecoForm;
+import br.com.pizzaria.model.dto.EnderecoFormDTO;
 
 public class EnderecoValidation implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return EnderecoForm.class.isAssignableFrom(clazz);
+		return EnderecoFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class EnderecoValidation implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "numero", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "logradouro", "field.required");
 		
-		EnderecoForm enderecoForm = (EnderecoForm) target;
+		EnderecoFormDTO enderecoForm = (EnderecoFormDTO) target;
 		if(enderecoForm.getCep().length() != 8) {
 			errors.rejectValue("cep", "field.invalid");
 		}

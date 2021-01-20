@@ -8,7 +8,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<tags:pageTemplate title="Escolha os sabores" css="home.css">
+<tags:pageTemplate title="Escolha os sabores" css="home.css" customCss="sabores.css">
 	<div class="container p-3 bg-light mt-3 mb-3" style="height:fit-content">
 		<h1>Escolha até 4 sabores</h1>
 		<div class="container mt-5 mb-3 border p-3 rounded bg-white">
@@ -22,11 +22,11 @@
 					</div>
 				</div>
 			<h3>Sabores selecionados:</h3>
-			<ul id="lista-sabores-selecionados" class="list-group list-group-horizontal">
+			<ul id="lista-sabores-selecionados" class="list-group list-group-horizontal m-3">
 				<template id="template-sabor-selecionado">
-					<li class="list-group-item sabor-selecionado">
+					<li class="text-center list-group-item sabor-selecionado mr-2 border">
 						<p class="sabor-selecionado-titulo"></p>
-						<button class="btn btn-remover-sabor-selecionado" type="button">Remover</button>
+						<button class="btn btn-danger btn-remover-sabor-selecionado" type="button">Remover</button>
 					</li>
 				</template>
 			</ul>
@@ -57,7 +57,7 @@
 		</div>
 		<div class="container text-center" id = "lista-sabores">
 			<template id="template-card-sabor">
-					<div class="card d-inline-block m-2" style="width: 18rem;">
+					<div class="card d-inline-block m-2 card-sabor" style="width: 18rem;">
 						<div class="card-body" >
 							<h5 class="card-title card-sabor-titulo"></h5>
 							<p class="card-text card-sabor-descricao"></p>
@@ -67,6 +67,7 @@
 			</template>
 		</div>
 	</div>
+	<script src = "${pageContext.request.contextPath}/resources/js/sabor/buscaSabores.js"></script>
 	<script src = "${pageContext.request.contextPath}/resources/js/pedido/formEscolhaSabores.js"></script>
 </tags:pageTemplate>
   

@@ -1,20 +1,19 @@
-const cepInput = document.querySelector(".mask-cep");
-const estadoInput = document.querySelector(".input-estado");
-const cidadeInput = document.querySelector(".input-cidade");
-const bairroInput = document.querySelector(".input-bairro");
-const logradouroInput = document.querySelector(".input-logradouro");
-const complementoInput = document.querySelector(".input-complemento");
 
-const cepPattern = "99999-999";
+maskInputsCEP();
 
-VMasker(cepInput).maskPattern(cepPattern)
+adicionaEventoDeBuscaAoCEP(preencheCampos);
 
-cepInput.addEventListener("focusout", function(e) {
-    var cep = cepInput.value.replace(/[^\d]/g, "")
-    buscaEndereco(cep)
-})
+function adicionaEventoDeBuscaAoCEP(callback) {
+    var cepInputs = document.querySelectorAll(".mask-cep");
+    cepInputs.forEach((cepInput) => {
+        cepInput.addEventListener("focusout", function (e) {
+            var cep = cepInput.value.replace(/[^\d]/g, "");
+            buscaEndereco(cep, callback);
+        });
+    });
+}
 
-function buscaEndereco(cep){
+function buscaEndereco(cep, callback){
     if(cep.replace(/[^\d]/g, "").length != 8){
         return
     }
@@ -24,7 +23,7 @@ function buscaEndereco(cep){
     http.onreadystatechange = function(){
         if(http.status == 200){
             var response  = JSON.parse(http.responseText)
-            preencheCampos(response)
+            callback(response)
         }
     }
 
@@ -37,23 +36,44 @@ function preencheCampos(endereco){
     if(endereco["erro"] === true){
         return
     }
+    
+    var estadoInputs = document.querySelectorAll(".input-estado");
+    var cidadeInputs = document.querySelectorAll(".input-cidade");
+    var bairroInputs = document.querySelectorAll(".input-bairro");
+    var logradouroInputs = document.querySelectorAll(".input-logradouro");
+    var complementoInputs = document.querySelectorAll(".input-complemento");
 
-    cidadeInput.value = endereco["localidade"] != undefined ?  endereco["localidade"] : ""
-    bairroInput.value = endereco["bairro"] != undefined ? endereco["bairro"] : ""
-    logradouroInput.value = endereco["logradouro"] != undefined ? endereco["logradouro"] : ""
-    complementoInput.value = endereco["complemento"] != undefined ? endereco["complemento"] : ""
-    if(endereco["uf"] != undefined){
-        var index;
-        for (let i = 0; i < estadoInput.options.length; i++) {
-            const option = estadoInput.options[i];
-            if(option.value == endereco["uf"]){
-                index = i
-                break
+    estadoInputs.forEach((estadoInput) => {
+        if(endereco["uf"] != undefined){
+            var index;
+            for (let i = 0; i < estadoInput.options.length; i++) {
+                const option = estadoInput.options[i];
+                if(option.value == endereco["uf"]){
+                    index = i
+                    break
+                }
             }
-            
+            estadoInput.selectedIndex = index
         }
+    });
 
-        estadoInput.selectedIndex = index
+    cidadeInputs.forEach((cidadeInput) => {
+        cidadeInput.value = endereco["localidade"] != undefined ?  endereco["localidade"] : cidadeInput.value
+    });
 
-    }
+    bairroInputs.forEach((bairroInput) => {
+        bairroInput.value = endereco["bairro"] != undefined ? endereco["bairro"] : bairroInput.value
+    });
+
+    logradouroInputs.forEach((logradouroInput) => {
+        logradouroInput.value = endereco["logradouro"] != undefined ? endereco["logradouro"] : logradouroInput.value
+    });
+
+    complementoInputs.forEach((complementoInput) => {
+        if(endereco["complemento"] != undefined){
+            complementoInput.value = endereco["complemento"]
+        }
+    })
+
 }
+

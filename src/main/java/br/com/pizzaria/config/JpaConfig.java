@@ -12,12 +12,11 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 public class JpaConfig {
-	
-	
+
 	@Bean
-	public DataSource dataSource() throws PropertyVetoException {
+	public HikariConfig hikariConfigDev() {
 		HikariConfig hikariConfig = new HikariConfig();
-		
+
 		hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		hikariConfig.setUsername("root");
 		hikariConfig.setPassword("");
@@ -26,9 +25,14 @@ public class JpaConfig {
 		hikariConfig.setMaximumPoolSize(20);
 		hikariConfig.setMaxLifetime(1200000);
 		
+		return hikariConfig;
+
+	}
+
+	@Bean
+	public DataSource dataSource(HikariConfig hikariConfig) throws PropertyVetoException {
 		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-		
 		return dataSource;
 	}
-	
+
 }

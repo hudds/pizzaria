@@ -1,5 +1,6 @@
 package br.com.pizzaria.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,9 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name="TB_SABORES")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Sabor {
 	
 	@Id
@@ -27,6 +34,10 @@ public class Sabor {
 	@Column(name="TIPO")
 	@Enumerated(EnumType.STRING)
 	private TipoSabor tipo;
+	
+	@Column(name = "VISIVEL")
+	@NotNull
+	private Boolean visivel = true;
 	
 	public Sabor() {
 		
@@ -98,6 +109,14 @@ public class Sabor {
 	@Override
 	public String toString() {
 		return this.titulo;
+	}
+
+	public Boolean getVisivel() {
+		return visivel;
+	}
+
+	public void setVisivel(Boolean visivel) {
+		this.visivel = visivel;
 	}
 
 }

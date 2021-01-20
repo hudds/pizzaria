@@ -5,6 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -13,14 +17,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.pizzaria.dao.filter.BuscaLikeSabor;
+import br.com.pizzaria.dao.filter.BuscaSabor;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
-import br.com.pizzaria.model.form.SaborForm;
+import br.com.pizzaria.model.dto.SaborFormDTO;
 import br.com.pizzaria.service.SaborService;
 import br.com.pizzaria.validation.SaborValidation;
 
@@ -37,7 +42,7 @@ public class SaboresController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = { "/cadastro" })
-	public ModelAndView formNovoSabor(@ModelAttribute("novoSabor") SaborForm novoSabor) {
+	public ModelAndView formNovoSabor(@ModelAttribute("novoSabor") SaborFormDTO novoSabor) {
 		ModelAndView modelAndView = new ModelAndView("sabor/formNovoSabor");
 		modelAndView.addObject("novoSabor", novoSabor);
 		modelAndView.addObject("tipos", TipoSabor.values());
@@ -45,24 +50,23 @@ public class SaboresController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, path = { "/cadastro" })
-	public ModelAndView cadastra(@ModelAttribute("novoSabor") @Valid SaborForm novoSabor, BindingResult result,
+	public ModelAndView cadastra(@ModelAttribute("novoSabor") @Valid SaborFormDTO novoSabor, BindingResult result,
 			RedirectAttributes attributes) {
 		ModelAndView modelAndView = new ModelAndView("redirect:/sabor");
 		if (result.hasErrors()) {
 			return formNovoSabor(novoSabor);
 		}
-		saborService.gravaSabor(novoSabor.createSabor());
+		saborService.grava(novoSabor.createSabor());
 		attributes.addFlashAttribute("statusCadastro", "success");
 		return modelAndView;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView sabores(@RequestParam(name = "tipo", required = false) TipoSabor tipoSelecionado,
-			@RequestParam(name = "busca", required = false) String busca) {
+	public ModelAndView sabores(BuscaLikeSabor busca, Authentication authentication) {
 		ModelAndView modelAndView = new ModelAndView("sabor/listaSaboresComJavaScript");
 		modelAndView.addObject("tipos", TipoSabor.values());
-		modelAndView.addObject("tipoSelecionado", tipoSelecionado);
-		modelAndView.addObject("sabores", saborService.buscaSaboresPorTipoETituloOuDescricao(tipoSelecionado, busca));
+		modelAndView.addObject("tipoSelecionado", busca.getTipo());
+		modelAndView.addObject("sabores", saborService.buscaSabores(busca, authentication));
 		modelAndView.addObject("busca", busca);
 		return modelAndView;
 	}
@@ -70,17 +74,26 @@ public class SaboresController {
 
 	@RequestMapping(method = RequestMethod.GET, path = {"/json"})
 	@ResponseBody
-	public List<Sabor> saboresJson(@RequestParam(name = "tipo", required = false) TipoSabor tipoSelecionado,
-			@RequestParam(name = "busca", required = false) String busca) {
-		List<Sabor> sabores = saborService.buscaSaboresPorTipoETituloOuDescricao(tipoSelecionado, busca);
+	public List<Sabor> saboresJson(BuscaSabor busca, Authentication authentication) {
+		System.out.println("Tipo sabor: " + busca.getTipo());
+		List<Sabor> sabores = saborService.buscaSabores(busca, authentication);
+		return sabores;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = {"/json/like"})
+	@ResponseBody
+	public List<Sabor> buscaSaboresLike(BuscaLikeSabor busca, Authentication authentication) {
+		System.out.println("Busca apenas visiveis: " + busca.getVisivel());
+		System.out.println("Tipo sabor: " + busca.getTipo());
+		List<Sabor> sabores = saborService.buscaSabores(busca, authentication);
 		return sabores;
 	}
 
 	@RequestMapping(path = { "/edit/{pId}" }, method = RequestMethod.GET)
-	public ModelAndView formEdit(SaborForm sabor, @PathVariable("pId") Integer pId) {
+	public ModelAndView formEdit(SaborFormDTO sabor, @PathVariable("pId") Integer pId) {
 		ModelAndView modelAndView = new ModelAndView("sabor/formEditarSabor");
 		if (sabor.getId() == null) {
-			sabor = new SaborForm(saborService.buscaSabor(pId));
+			sabor = new SaborFormDTO(saborService.buscaSabor(pId));
 		}
 		modelAndView.addObject("sabor", sabor);
 		modelAndView.addObject("tipos", TipoSabor.values());
@@ -88,7 +101,7 @@ public class SaboresController {
 	}
 
 	@RequestMapping(path = { "/edit" }, method = RequestMethod.POST)
-	public ModelAndView edit(@ModelAttribute("sabor") @Valid SaborForm saborForm, BindingResult result,
+	public ModelAndView edit(@ModelAttribute("sabor") @Valid SaborFormDTO saborForm, BindingResult result,
 			RedirectAttributes attributes) {
 		if (result.hasErrors()) {
 			return formEdit(saborForm, saborForm.getId());
@@ -109,9 +122,27 @@ public class SaboresController {
 	@RequestMapping(path = { "/delete/{id}" }, method = RequestMethod.POST)
 	public ModelAndView delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
 		ModelAndView modelAndView = new ModelAndView("redirect:/sabor");
-		saborService.remove(id);
+		try {
+			saborService.remove(id);
+		} catch (DataIntegrityViolationException e) {
+			redirectAttributes.addFlashAttribute("statusDelete", "error");
+			redirectAttributes.addFlashAttribute("errorType", "dataIntegrity");
+			return modelAndView;
+		}
 		redirectAttributes.addFlashAttribute("statusDelete", "success");
 		return modelAndView;
+	}
+	
+	@RequestMapping(path={"/esconde/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> esconde(@PathVariable(name = "id") Integer id) {
+		saborService.setVisivel(id, false);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@RequestMapping(path={"/mostra/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> mostra(@PathVariable(name = "id") Integer id) {
+		saborService.setVisivel(id, true);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 }

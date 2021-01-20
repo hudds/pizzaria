@@ -92,6 +92,7 @@
 		</form:form>
 	</div>
 	<script type="text/javascript" src="${pathJs}vanilla-masker.js"></script>
+	<script type="text/javascript" src="${pathJs}apply-masks.js"></script>
 	<script type="text/javascript" src="${pathJs}usuario/enderecoForm.js"></script>
 	<script type="text/javascript" src="${pathJs}usuario/telefoneForm.js"></script>
 	<script type="text/javascript" src="${pathJs}usuario/unmask-form.js"></script>

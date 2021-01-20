@@ -2,14 +2,17 @@ package br.com.pizzaria.service;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import br.com.pizzaria.dao.PizzaDAO;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
+import br.com.pizzaria.security.util.RoleChecker;
 
 @Component
 @Transactional
@@ -18,13 +21,21 @@ public class PizzaService {
 	@Autowired
 	private PizzaDAO pizzaDAO;
 
-	public void cadastra(Pizza pizza) {
-		pizzaDAO.cadastra(pizza);
+	public Integer grava(Pizza pizza) {
+		return pizzaDAO.cadastra(pizza);
 		
 	}
 
 	public List<Pizza> buscaPizzas() {
 		return pizzaDAO.buscaPizzas();
+	}
+	
+	public List<Pizza> buscaPizzas(Authentication authentication){
+		if(RoleChecker.currentUserIsAdmin(authentication)) {
+			return this.buscaPizzas();
+		}
+		return pizzaDAO.buscaPizzas(true);
+		
 	}
 	
 	public List<Pizza> buscaPizzasOrdenadasPeloTipoSabor(TipoSabor primeiro){
@@ -42,7 +53,7 @@ public class PizzaService {
 	}
 	
 	
-	public Pizza buscaPizza(Integer id) {
+	public Pizza busca(Integer id) {
 		return pizzaDAO.buscaPizza(id);
 	}
 
@@ -51,12 +62,21 @@ public class PizzaService {
 		
 	}
 
-	public Pizza editaPizza(Pizza pizza) {
-		return pizzaDAO.editaPizza(pizza);
+	public Pizza edita(Pizza pizza) {
+		return pizzaDAO.edita(pizza);
 	}
 
 	public TipoSabor buscaTipoSaborPeloId(Integer idPizza) {
 		return pizzaDAO.buscaTipoSaborPeloId(idPizza);
+	}
+
+	public void setVisivel(Integer id, boolean visivel) {
+		Pizza pizza = pizzaDAO.buscaPizza(id);
+		if(pizza == null) {
+			throw new EntityNotFoundException("Nenhuma pizza encontrada com o id: " + id);
+		}
+		pizza.setVisivel(visivel);
+		this.edita(pizza);
 	}
 	
 }

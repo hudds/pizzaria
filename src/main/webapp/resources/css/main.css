@@ -27,3 +27,17 @@ body {
 .container {
 	box-sizing: border-box;
 }
+
+.sabor-oculto, .oculto{
+	opacity: 0.5;
+}
+
+.btn-toggle-visibility{
+	background-color: white;
+	border: none;
+}
+
+.btn-toggle-visibility img{
+	width: 2em;
+}
+

@@ -23,6 +23,12 @@
 				</div>
 			</c:if>
 			
+			<c:if test="${bebida_cadastro_status == 'success'}">
+				<div class="alert alert-success" role="alert">
+					Bebida foi cadastrada!
+				</div>
+			</c:if>
+			
 			<table class="table">
 				<thead>
 					<tr>

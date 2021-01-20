@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,16 +20,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "TB_USUARIOS")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Usuario implements UserDetails {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -43,18 +48,21 @@ public class Usuario implements UserDetails {
 	private String nomeDeUsuario;
 
 	@Column(name="SENHA")
+	@JsonIgnore
 	private String senha;
 
 	@OneToMany
 	@JoinTable(name="TB_USUARIO_PEDIDOS",
 	joinColumns = @JoinColumn(name="USUARIO_ID"),
 	inverseJoinColumns = @JoinColumn(name="PEDIDO_ID"))
+	@JsonBackReference
 	private List<Pedido> pedidos;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "TB_USUARIOS_ROLES", 
 	joinColumns = @JoinColumn(name = "USUARIO_ID"),
 	inverseJoinColumns = @JoinColumn(name= "AUTHORITY"))
+	@JsonIgnore
 	private Set<Role> roles;
 
 	@Column(name="NOME")
@@ -148,36 +156,43 @@ public class Usuario implements UserDetails {
 	}
 
 	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;
 	}
 
 	@Override
+	@JsonIgnore
 	public String getPassword() {
 		return this.senha;
 	}
 
 	@Override
+	@JsonIgnore
 	public String getUsername() {
 		return this.nomeDeUsuario;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isEnabled() {
 		return true;
 	}

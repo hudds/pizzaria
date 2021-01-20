@@ -6,13 +6,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.PizzaForm;
+import br.com.pizzaria.model.dto.PizzaFormDTO;
 
 public class PizzaValidation implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return PizzaForm.class.isAssignableFrom(clazz);
+		return PizzaFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class PizzaValidation implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "descricao", "field.required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "preco", "field.required");
 		
-		PizzaForm pizza = (PizzaForm) target;
+		PizzaFormDTO pizza = (PizzaFormDTO) target;
 		
 		if(pizza.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
 			errors.rejectValue("preco", "field.invalid");

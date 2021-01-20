@@ -1,0 +1,25 @@
+
+.card-sabor{
+	height: auto;
+	width: 30%;
+}
+
+.dropdown-tipo-selecionado, .dropdown-tipos {
+	margin-left: 10px;
+}
+
+.container-sabores{
+	display:flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+
+.btn-ocultar-sabor, .btn-mostrar-sabor{
+	background-color: white;
+	border: none;
+	
+}
+
+.btn-ocultar-sabor img, .btn-mostrar-sabor img{
+	width: 2em;
+}

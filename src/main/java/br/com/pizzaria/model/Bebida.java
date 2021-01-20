@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="TB_BEBIDAS")
@@ -22,6 +23,9 @@ public class Bebida {
 	private String titulo;
 	@Column(name="VALOR")
 	private BigDecimal valor;
+	@Column(name = "VISIVEL")
+	@NotNull
+	private Boolean visivel = true;
 	
 	public Integer getId() {
 		return id;
@@ -58,6 +62,12 @@ public class Bebida {
 			return false;
 		Bebida other = (Bebida) obj;
 		return Objects.equals(id, other.id);
+	}
+	public Boolean getVisivel() {
+		return visivel;
+	}
+	public void setVisivel(Boolean visivel) {
+		this.visivel = visivel;
 	}
 
 }

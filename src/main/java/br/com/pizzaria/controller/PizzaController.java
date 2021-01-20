@@ -1,21 +1,31 @@
 package br.com.pizzaria.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.pizzaria.controller.contracts.EditarVisbilidadeDTO;
+import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
-import br.com.pizzaria.model.form.PizzaForm;
+import br.com.pizzaria.model.dto.PizzaFormDTO;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.validation.PizzaValidation;
 
@@ -32,7 +42,7 @@ public class PizzaController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path = {"/cadastro"})
-	public ModelAndView formPizza(@ModelAttribute("novaPizza") PizzaForm novaPizza) {
+	public ModelAndView formPizza(@ModelAttribute("novaPizza") PizzaFormDTO novaPizza) {
 		ModelAndView modelAndView = new ModelAndView("pizza/formNovaPizza");
 		modelAndView.addObject("novaPizza", novaPizza);
 		modelAndView.addObject("tipos", TipoSabor.values());
@@ -40,11 +50,11 @@ public class PizzaController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = {"/cadastro"})
-	public ModelAndView cadastra(@ModelAttribute("novaPizza") @Valid PizzaForm novaPizza, BindingResult result, RedirectAttributes redirectAttributes) {
+	public ModelAndView cadastra(@ModelAttribute("novaPizza") @Valid PizzaFormDTO novaPizza, BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			return formPizza(novaPizza);
 		}
-		pizzaService.cadastra(novaPizza.createPizza());
+		pizzaService.grava(novaPizza.createPizza());
 		ModelAndView modelAndView = new ModelAndView("redirect:/pizza/");
 		redirectAttributes.addFlashAttribute("statusCadastroPizza", "success");
 		return modelAndView;
@@ -53,7 +63,7 @@ public class PizzaController {
 	@RequestMapping(method = RequestMethod.GET, path={"/delete/{id}"})
 	public ModelAndView confirmarDelete(@PathVariable("id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView("pizza/confirmarDelete");
-		modelAndView.addObject("pizzaParaDeletar", pizzaService.buscaPizza(id));
+		modelAndView.addObject("pizzaParaDeletar", pizzaService.busca(id));
 		return modelAndView;
 	}
 	
@@ -66,19 +76,19 @@ public class PizzaController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path={"/edit/{pId}"})
-	public ModelAndView formEdit(PizzaForm pizzaForm, @PathVariable("pId") Integer id) {
+	public ModelAndView formEdit(PizzaFormDTO pizzaForm, @PathVariable("pId") Integer id) {
 		ModelAndView modelAndView = new ModelAndView("pizza/formEditarPizza");
-		pizzaForm = pizzaForm.getId() == null ? new PizzaForm(pizzaService.buscaPizza(id)) : pizzaForm;
+		pizzaForm = pizzaForm.getId() == null ? new PizzaFormDTO(pizzaService.busca(id)) : pizzaForm;
 		modelAndView.addObject("pizzaEdit", pizzaForm);
 		return modelAndView;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path={"/edit"})
-	public ModelAndView edit(@ModelAttribute("pizzaEdit") @Valid PizzaForm pizzaForm, BindingResult result, RedirectAttributes redirectAttributes) {
+	public ModelAndView edit(@ModelAttribute("pizzaEdit") @Valid PizzaFormDTO pizzaForm, BindingResult result, RedirectAttributes redirectAttributes) {
 		if(result.hasErrors()) {
 			return formEdit(pizzaForm, pizzaForm.getId());
 		}
-		pizzaService.editaPizza(pizzaForm.createPizza());
+		pizzaService.edita(pizzaForm.createPizza());
 		ModelAndView modelAndView = new ModelAndView("redirect:/pizza/edit/"+pizzaForm.getId());
 		redirectAttributes.addFlashAttribute("statusEditPizza", "success");
 		return modelAndView;
@@ -89,6 +99,31 @@ public class PizzaController {
 		ModelAndView modelAndView = new ModelAndView("pizza/listaPizzas");
 		modelAndView.addObject("pizzas", pizzaService.buscaPizzasOrdenadasPeloTipoSabor(TipoSabor.SALGADA));
 		return modelAndView;
+	}
+	
+	@GetMapping(path = "/json")
+	@ResponseBody
+	public List<Pizza> listaJson(Authentication authentication) {
+		return this.pizzaService.buscaPizzas(authentication);
+	}
+	
+	
+	@RequestMapping(path={"/esconde/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> esconde(@PathVariable(name = "id") Integer id) {
+		pizzaService.setVisivel(id, false);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@RequestMapping(path={"/visivel/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> setVisibilidade(@PathVariable(name = "id") Integer id, @RequestBody boolean visivel) {
+		pizzaService.setVisivel(id, visivel);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@RequestMapping(path={"/mostra/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> mostra(@PathVariable(name = "id") Integer id) {
+		pizzaService.setVisivel(id, true);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 }

@@ -57,7 +57,7 @@
 						<div class="card-body">
 							<h5 class="card-title">${sabor.titulo}</h5>
 							<p class="card-text">${sabor.descricao}</p>
-							<a href="#" class="btn btn-danger mb-1">Fazer pedido.</a>
+							<a href="/pedido/fazerPedido" class="btn btn-danger mb-1">Fazer pedido.</a>
 							<sec:authorize access="hasRole('ADMIN')">
 								<a href="/sabor/edit/${sabor.id}" class="btn btn-danger mb-1">Editar Sabor</a>
 								<a href="/sabor/delete/${sabor.id}" class="btn btn-danger mb-1">Deletar Sabor</a>

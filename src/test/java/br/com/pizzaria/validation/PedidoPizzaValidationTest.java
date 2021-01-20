@@ -27,7 +27,7 @@ import br.com.pizzaria.model.PedidoPizza;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
-import br.com.pizzaria.model.form.PedidoPizzaForm;
+import br.com.pizzaria.model.dto.PedidoPizzaFormDTO;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.service.SaborService;
 
@@ -51,7 +51,7 @@ public class PedidoPizzaValidationTest {
 		Integer idPizza = em.persistAndGetId(criaPizza(TipoSabor.SALGADA), Integer.class);
 		List<Integer> idsSabores = new ArrayList<Integer>();
 		idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.SALGADA), Integer.class));
-		PedidoPizzaForm pedido = new PedidoPizzaForm();
+		PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 		pedido.setIdPizza(idPizza);
 		pedido.setIdsSabores(idsSabores);
 		pedido.setQuantidade(1);
@@ -70,7 +70,7 @@ public class PedidoPizzaValidationTest {
 	public void testValidateCampoPizzaVazio() {
 		List<Integer> idsSabores = new ArrayList<Integer>();
 		idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.SALGADA), Integer.class));
-		PedidoPizzaForm pedido = new PedidoPizzaForm();
+		PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 		pedido.setIdsSabores(idsSabores);
 		pedido.setQuantidade(1);
 		
@@ -88,7 +88,7 @@ public class PedidoPizzaValidationTest {
 	@Test
 	public void testValidateCampoSaboresVazio() {
 		Integer idPizza = em.persistAndGetId(criaPizza(TipoSabor.SALGADA), Integer.class);
-		PedidoPizzaForm pedido = new PedidoPizzaForm();
+		PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 		pedido.setIdPizza(idPizza);
 		pedido.setQuantidade(1);
 		
@@ -105,7 +105,7 @@ public class PedidoPizzaValidationTest {
 		Integer idPizza = em.persistAndGetId(criaPizza(TipoSabor.SALGADA), Integer.class);
 		List<Integer> idsSabores = new ArrayList<Integer>();
 		idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.SALGADA), Integer.class));
-		PedidoPizzaForm pedido = new PedidoPizzaForm();
+		PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 		pedido.setIdPizza(idPizza);
 		pedido.setIdsSabores(idsSabores);
 		pedido.setQuantidade(0);
@@ -127,7 +127,7 @@ public class PedidoPizzaValidationTest {
 		Integer idPizza = em.persistAndGetId(criaPizza(TipoSabor.SALGADA), Integer.class);
 		List<Integer> idsSabores = new ArrayList<Integer>();
 		idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.DOCE), Integer.class));
-		PedidoPizzaForm pedido = new PedidoPizzaForm();
+		PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 		pedido.setIdPizza(idPizza);
 		pedido.setIdsSabores(idsSabores);
 		pedido.setQuantidade(1);
@@ -151,7 +151,7 @@ public class PedidoPizzaValidationTest {
 			IntStream.range(0, i).forEach(j -> {
 				idsSabores.add(em.persistAndGetId(criaSabor(TipoSabor.SALGADA), Integer.class));			
 			});
-			PedidoPizzaForm pedido = new PedidoPizzaForm();
+			PedidoPizzaFormDTO pedido = new PedidoPizzaFormDTO();
 			pedido.setIdPizza(idPizza);
 			pedido.setIdsSabores(idsSabores);
 			pedido.setQuantidade(1);

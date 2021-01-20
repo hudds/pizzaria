@@ -3,14 +3,20 @@ package br.com.pizzaria.model;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name="TB_PEDIDOS_DE_BEBIDAS")
-public class PedidoBebida extends ItemPedido implements ItemCarrinho{
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class PedidoBebida extends ItemPedido{
 	
 	
 	@ManyToOne
@@ -46,11 +52,6 @@ public class PedidoBebida extends ItemPedido implements ItemCarrinho{
 	@Override
 	public String geraDescricao() {
 		return this.bebida.getTitulo();
-	}
-
-	@Override
-	public Boolean isEmpty() {
-		return (getQuantidade() == null ? true : getQuantidade() <= 0) || this.bebida == null;
 	}
 	
 	@Override

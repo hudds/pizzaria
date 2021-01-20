@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.NoResultException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,13 +17,16 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.pizzaria.builder.PedidoBuilder;
+import br.com.pizzaria.controller.contracts.EstadoPedidoDTO;
 import br.com.pizzaria.controller.formatter.StringToLocalDateTimeFormatter;
 import br.com.pizzaria.controller.util.ValidadorDeEstadoParaPedido;
 import br.com.pizzaria.model.Carrinho;
@@ -33,8 +39,9 @@ import br.com.pizzaria.model.PedidoBebida;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
 import br.com.pizzaria.model.Usuario;
-import br.com.pizzaria.model.form.PedidoPizzaForm;
-import br.com.pizzaria.query.PedidoQuery;
+import br.com.pizzaria.model.dto.BuscaLikePedidoDTO;
+import br.com.pizzaria.model.dto.PedidoPizzaFormDTO;
+import br.com.pizzaria.security.util.CurrentUserGetter;
 import br.com.pizzaria.service.BebidaService;
 import br.com.pizzaria.service.PedidoService;
 import br.com.pizzaria.service.PizzaService;
@@ -77,20 +84,18 @@ public class PedidoController {
 	}
 
 	@RequestMapping(path = { "/fazerPedido" }, method = RequestMethod.GET)
-	public ModelAndView formsDePedido(@RequestParam(name = "pizza", required = false) Integer idPizza,
-			@RequestParam(name = "sabores", required = false) List<Integer> idsSabores,
-			PedidoPizzaForm pedidoPizzaForm) {
-		ModelAndView modelAndView = decideQualFormRetornar(idPizza, idsSabores);
+	public ModelAndView formsDePedido(@RequestParam(name = "pizza", required = false) Integer idPizza, PedidoPizzaFormDTO pedidoPizzaForm) {
+		ModelAndView modelAndView = decideQualFormRetornar(idPizza);
 		modelAndView.addObject("novoPedidoPizza", pedidoPizzaForm);
 		return modelAndView;
 	}
 
 	@RequestMapping(path = { "/addPizza" }, method = RequestMethod.POST)
 	public ModelAndView adicionaPizzaAoCarrinho(
-			@ModelAttribute("novoPedidoPizza") @Valid PedidoPizzaForm pedidoPizzaForm, BindingResult bindingResult) {
+			@ModelAttribute("novoPedidoPizza") @Valid PedidoPizzaFormDTO pedidoPizzaForm, BindingResult bindingResult) {
 		ModelAndView modelAndView = new ModelAndView("redirect:carrinho");
 		if (bindingResult.hasErrors()) {
-			return formsDePedido(pedidoPizzaForm.getIdPizza(), pedidoPizzaForm.getIdsSabores(), pedidoPizzaForm);
+			return formsDePedido(pedidoPizzaForm.getIdPizza(), pedidoPizzaForm);
 		}
 
 		this.carrinho.adicionaItem(pedidoPizzaForm.createPedidoPizza(pizzaService, saborService));
@@ -160,7 +165,7 @@ public class PedidoController {
 	public ModelAndView resumoDoPedido(Authentication authentication) {
 		
 		ModelAndView modelAndView = new ModelAndView();
-		Usuario usuario = (Usuario) usuarioService.buscaPeloEmailOuNome(authentication.getName());
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		String uriValido = "pedido/resumo";
 		String uriParaRedirecionar = ValidadorDeEstadoParaPedido.getURIParaRedirecionar(carrinho, usuario, uriValido);
 		
@@ -178,7 +183,7 @@ public class PedidoController {
 	@RequestMapping(method = RequestMethod.POST, path = { "/confirmacao" })
 	public ModelAndView registraPedido(Authentication authentication, RedirectAttributes redirectAttributes) {
 		
-		Usuario usuario = (Usuario) usuarioService.buscaPeloEmailOuNome(authentication.getName());
+		Usuario usuario = CurrentUserGetter.get(authentication, usuarioService, false);
 		String uriSucesso = "redirect:/pedido/detalhes";
 		String uriParaRedirecionar = ValidadorDeEstadoParaPedido.getURIParaRedirecionar(carrinho, usuario,
 				uriSucesso);
@@ -205,25 +210,65 @@ public class PedidoController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path= {"/lista"})
-	public ModelAndView pedidos(@ModelAttribute("buscaPedido")PedidoQuery busca) {
+	public ModelAndView pedidos(@ModelAttribute("buscaPedido")BuscaLikePedidoDTO busca) {
 		ModelAndView modelAndView = new ModelAndView("pedido/pedidos");
 		modelAndView.addObject("pedidos", pedidoService.buscaPedidos(busca));
+		//System.out.println(busca.getCliente().vazio());
 		modelAndView.addObject("buscaPedido", busca);
 		modelAndView.addObject("estadosPedido", EstadoPedido.values());
 		return modelAndView;
 	}
+	
+	@RequestMapping(method= RequestMethod.GET, path= {"/preparando"})
+	public ModelAndView pedidosEmPreparo() {
+		return new ModelAndView("pedido/pedidosEmPreparo");
+	}
+	
+	@RequestMapping(method= RequestMethod.GET, path= {"/enviados"})
+	public ModelAndView pedidosEnviados() {
+		return new ModelAndView("pedido/pedidosEnviados");
+	}
 
-	private ModelAndView decideQualFormRetornar(Integer idPizza, List<Integer> idsSabores) {
+	@RequestMapping(method= RequestMethod.GET, path= {"/recebidos"})
+	public ModelAndView pedidosRecebidos() {
+		return new ModelAndView("pedido/pedidosRecebidos");
+	}
+	
+	@RequestMapping(method=RequestMethod.PUT, path = {"/estado/{id}"})
+	public ResponseEntity<HttpStatus> mudaEstadoPedido(@PathVariable(name = "id") Integer id, @RequestBody EstadoPedidoDTO estado) {
+		try {
+			Pedido pedido = pedidoService.buscaSemItens(id);
+			pedido.setEstado(estado.getEstado());
+			pedidoService.edita(pedido);
+			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		} catch (NoResultException e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path= {"/json/lista"})
+	@ResponseBody
+	public List<Pedido> pedidosJSON(BuscaLikePedidoDTO busca) {
+		List<Pedido> buscaPedidos = pedidoService.buscaPedidos(busca);
+		return buscaPedidos;
+	}
 
-		boolean idsSaboresEhNulo = idsSabores == null || idsSabores.isEmpty();
-		boolean osDoisParametrosSaoNulos = idPizza == null && idsSaboresEhNulo;
+	private ModelAndView decideQualFormRetornar(Integer idPizza) {
 
 		ModelAndView modelAndView = new ModelAndView();
-
-		if (osDoisParametrosSaoNulos || idPizza == null) {
+		
+		if (idPizza == null) {
 			formEscolhaPizza(modelAndView);
 		} else {
-			formEscolhaSabores(idPizza, modelAndView);
+			Pizza pizza = pizzaService.busca(idPizza);
+			if(pizza == null) {
+				formEscolhaPizza(modelAndView);
+			} else {
+				formEscolhaSabores(pizza, modelAndView);
+			}
 		}
 		modelAndView.addObject("tipos", TipoSabor.values());
 		return modelAndView;
@@ -233,14 +278,11 @@ public class PedidoController {
 		modelAndView.setViewName("pedido/formEscolhaPizza");
 		List<Pizza> pizzas = pizzaService.buscaPizzasOrdenadasPeloTipoSabor(TipoSabor.SALGADA);
 		modelAndView.addObject("pizzas", pizzas);
-		modelAndView.addObject("method", "GET");
 	}
 
-	private void formEscolhaSabores(Integer idPizza, ModelAndView modelAndView) {
+	private void formEscolhaSabores(Pizza pizzaSelecionada, ModelAndView modelAndView) {
 		modelAndView.setViewName(("pedido/formEscolhaSabores"));
-		Pizza pizzaSelecionada = pizzaService.buscaPizza(idPizza);
 		modelAndView.addObject("pizzaSelecionada", pizzaSelecionada);
-		modelAndView.addObject("method", "POST");
 	}
 
 }

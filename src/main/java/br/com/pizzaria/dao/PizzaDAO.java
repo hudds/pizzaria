@@ -5,10 +5,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.pizzaria.dao.filter.Filter;
+import br.com.pizzaria.dao.util.CriteriaQueryGeneratorByFilter;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.TipoSabor;
 
@@ -18,8 +21,9 @@ public class PizzaDAO {
 	@Autowired
 	private EntityManager em;
 
-	public void cadastra(Pizza pizza) {
+	public Integer cadastra(Pizza pizza) {
 		em.persist(pizza);
+		return pizza.getId();
 	}
 	
 	public Pizza buscaPizza(Integer id) {
@@ -29,6 +33,12 @@ public class PizzaDAO {
 	public List<Pizza> buscaPizzas(){
 		return em.createQuery("select p from Pizza p", Pizza.class).getResultList();
 	}
+	
+	public List<Pizza> buscaPizzas(boolean visivel){
+		TypedQuery<Pizza> query = em.createQuery("select p from Pizza p where p.visivel = :pVisivel", Pizza.class);
+		query.setParameter("pVisivel", visivel);
+		return query.getResultList();
+	}
 
 	public void deletaPeloId(Integer id) {
 		String jpql = "delete from Pizza p where p.id = :pId";
@@ -37,7 +47,7 @@ public class PizzaDAO {
 		query.executeUpdate();
 	}
 
-	public Pizza editaPizza(Pizza pizza) {
+	public Pizza edita(Pizza pizza) {
 		return em.merge(pizza);
 	}
 
@@ -54,4 +64,13 @@ public class PizzaDAO {
 		query.setParameter("pTipoSabor", tipoSabor);
 		return query.getResultList();
 	}
+	
+	public List<Pizza> buscaPizzas(Filter busca){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQueryGeneratorByFilter<Pizza> criteriaGenerator = new CriteriaQueryGeneratorByFilter<>(Pizza.class, cb);
+		TypedQuery<Pizza> query = em.createQuery(criteriaGenerator.generate(busca));
+		return query.getResultList();
+		
+	}
+	
 }

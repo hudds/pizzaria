@@ -17,27 +17,18 @@
 				Informações foram cadastradas com sucesso!
 			</div>
 		</c:if>
-		<div class="container text-center">
-			<c:forEach items="${pizzas}" var="pizza">
-					<div class="card d-inline-block m-2" style="width: 18rem;">
-						<div class="card-body">
-							<h5 class="card-title">${pizza.titulo}</h5>
-							<h5 class="card-title">${pizza.tipoSabor}</h5>
-							<p class="card-text">${sabor.descricao}</p>
-							<h5 class="card-title"><fmt:formatNumber value="${pizza.preco}" type="currency" /></h5>
-							<a href="#" class="btn btn-danger mb-1">Fazer pedido.</a>
-							<sec:authorize access="hasRole('ADMIN')">
-								<div>
-									<a href="/pizza/edit/${pizza.id}" class="btn btn-danger mb-1">Editar Pizza</a>
-								</div>
-								<div>
-									<a href="/pizza/delete/${pizza.id}" class="btn btn-danger">Deletar Pizza</a>
-								</div>
-							</sec:authorize>
-						</div>
-					</div>
-			</c:forEach>
-		</div>
+		<section class="container text-center">
+			<div id="pizzas">
+				
+			</div>
+		</section>
 	</div>
+	<script src="${pageContext.request.contextPath}/resources/js/Ajax.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/Paths.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/View.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/pizza/PizzaView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/pizza/PizzaController.js"></script>
+	<sec:authorize access="hasRole('ADMIN')" var="isAdmin"></sec:authorize>
+	<script>var pizzaController = new PizzaController("${pageContext.request.contextPath}", "${_csrf.token}", "${_csrf.headerName}", ${isAdmin})</script>
 </tags:pageTemplate>
   

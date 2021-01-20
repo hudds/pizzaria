@@ -1,5 +1,10 @@
 package br.com.pizzaria.config;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,13 +18,16 @@ import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 import br.com.pizzaria.controller.HomeController;
-import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.converter.StringToBigDecimalConverter;
 import br.com.pizzaria.converter.StringToRoleConverter;
+import br.com.pizzaria.dao.UsuarioDAO;
 
 @Configuration
 @EnableWebMvc
+@EnableCaching
 @ComponentScan(basePackageClasses = { HomeController.class, UsuarioDAO.class })
 public class WebAppConfig implements WebMvcConfigurer {
 
@@ -53,6 +61,12 @@ public class WebAppConfig implements WebMvcConfigurer {
 		configurer.enable();
 	}
 	
+	@Bean
+    public CacheManager cacheManager() {
+		CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager("pedidos");
+		caffeineCacheManager.setCaffeine(Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES));
+        return caffeineCacheManager;
+    }
 	
 
 }

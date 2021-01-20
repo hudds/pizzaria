@@ -2,6 +2,7 @@ package br.com.pizzaria.service;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class BebidaService {
 	@Autowired
 	private BebidaDAO bebidaDAO;
 
-	public Integer cadastra(Bebida bebida) {
+	public Integer grava(Bebida bebida) {
 		return bebidaDAO.cadastra(bebida);
 		
 	}
@@ -37,6 +38,15 @@ public class BebidaService {
 	public int deletaPeloId(Integer id) {
 		return bebidaDAO.deletaPeloId(id);
 		
+	}
+	
+	public void setVisivel(Integer id, boolean visivel) {
+		Bebida bebida = this.bebidaDAO.buscaBebida(id);
+		if(bebida == null) {
+			throw new EntityNotFoundException("Nenhuma bebida encontrada com o id: " + id);
+		}
+		bebida.setVisivel(visivel);
+		this.edita(bebida);
 	}
 	
 }

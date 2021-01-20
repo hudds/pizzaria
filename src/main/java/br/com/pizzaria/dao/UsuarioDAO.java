@@ -1,10 +1,15 @@
 package br.com.pizzaria.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,10 +42,18 @@ public class UsuarioDAO{
 		return em.createQuery(jpql, Usuario.class).getResultList();
 	}
 	
-	public UserDetails buscaPeloEmailOuNome(String usernameOrEmail) {
-		String jpql = "select u from Usuario u where u.nomeDeUsuario = :pUsernameOrEmail or u.email = :pUsernameOrEmail";
-		TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
-		query.setParameter("pUsernameOrEmail", usernameOrEmail);
+	public Usuario buscaPeloEmailOuNome(String usernameOrEmail, boolean fetchRoles) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
+		Root<Usuario> root = cq.from(Usuario.class);
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(cb.equal(root.get("nomeDeUsuario"), usernameOrEmail));
+		predicates.add(cb.equal(root.get("email"), usernameOrEmail));
+		if(fetchRoles) {
+			root.fetch("roles");
+		}
+		cq.select(root).where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
+		TypedQuery<Usuario> query = em.createQuery(cq);
 		Usuario usuario;
 		try {
 			usuario = query.getSingleResult();

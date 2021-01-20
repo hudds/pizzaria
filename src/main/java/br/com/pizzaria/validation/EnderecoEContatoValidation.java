@@ -4,13 +4,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.EnderecoEContatoForm;
+import br.com.pizzaria.model.dto.EnderecoEContatoFormDTO;
 
 public class EnderecoEContatoValidation implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return EnderecoEContatoForm.class.isAssignableFrom(clazz);
+		return EnderecoEContatoFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class EnderecoEContatoValidation implements Validator {
 			return;
 		}
 		
-		EnderecoEContatoForm enderecoContato = (EnderecoEContatoForm) target;
+		EnderecoEContatoFormDTO enderecoContato = (EnderecoEContatoFormDTO) target;
 
 		validaNumerosDeContato(errors, enderecoContato);
 		validaCep(enderecoContato, errors);
@@ -35,7 +35,7 @@ public class EnderecoEContatoValidation implements Validator {
 
 	}
 
-	private void validaNumerosDeContato(Errors errors, EnderecoEContatoForm enderecoContato) {
+	private void validaNumerosDeContato(Errors errors, EnderecoEContatoFormDTO enderecoContato) {
 		boolean campoCelularVazio = enderecoContato.getCelular() == null || enderecoContato.getCelular().trim().isEmpty();
 		boolean campoTelefoneVazio = enderecoContato.getTelefone() == null || enderecoContato.getTelefone().trim().isEmpty();
 		
@@ -66,14 +66,14 @@ public class EnderecoEContatoValidation implements Validator {
 		}
 	}
 	
-	private void validaCep(EnderecoEContatoForm enderecoEContatoForm, Errors errors) {
+	private void validaCep(EnderecoEContatoFormDTO enderecoEContatoForm, Errors errors) {
 		String cep = enderecoEContatoForm.getEndereco().getCep();
 		if(!cep.matches("^\\d{8}$|^\\d{5}-\\d{3}$")) {
 			errors.rejectValue("endereco.cep", "endereco.cep.invalid");
 		}
 	}
 	
-	private void validaNumero(EnderecoEContatoForm enderecoEContatoForm, Errors errors) {
+	private void validaNumero(EnderecoEContatoFormDTO enderecoEContatoForm, Errors errors) {
 		String numero = enderecoEContatoForm.getEndereco().getNumero();
 		if(numero.length() > 10 || numero.replaceAll("[^\\d]", "").isEmpty()) {
 			errors.rejectValue("endereco.numero", "endereco.numero.invalid");

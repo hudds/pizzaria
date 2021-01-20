@@ -20,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.pizzaria.dao.SaborDAO;
+import br.com.pizzaria.dao.filter.BuscaLikeSabor;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
 
@@ -40,7 +41,7 @@ public class SaborServiceTest {
 	@Test
 	public void testeGravaSabor() {
 		Sabor sabor = criaSabor(null);
-		saborService.gravaSabor(sabor);
+		saborService.grava(sabor);
 		Sabor encontrado = entityManager.find(Sabor.class, sabor.getId());
 		assertThat(encontrado).isEqualTo(sabor);
 	}
@@ -75,7 +76,7 @@ public class SaborServiceTest {
 	@Test
 	public void testeGravaERemove() {
 		Sabor sabor = criaSabor(null);
-		Integer id = saborService.gravaSabor(sabor);
+		Integer id = saborService.grava(sabor);
 		int tamanhoAntes = saborService.buscaSabores().size();
 		saborService.remove(id);
 		int tamanhoDepois = saborService.buscaSabores().size();
@@ -97,32 +98,24 @@ public class SaborServiceTest {
 		}
 		sabores.forEach(s -> System.out.println(s.getTitulo()));
 		
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "descricao").size()).isEqualTo(qntSalgadas);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "Descricao").size()).isEqualTo(qntSalgadas);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "descricao").size()).isEqualTo(qntDoces);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "Descricao").size()).isEqualTo(qntDoces);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA,"Titulo").size()).isEqualTo(qntSalgadas);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA,"titulo").size()).isEqualTo(qntSalgadas);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE,"Titulo").size()).isEqualTo(qntDoces);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE,"titulo").size()).isEqualTo(qntDoces);
+		BuscaLikeSabor busca = new BuscaLikeSabor();
 		
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "Titulo"+ (qntSalgadas-1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "titulo" + (qntSalgadas-1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "Titulo"+ (qntSalgadas-1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "titulo" + (qntSalgadas-1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "Titulo"+ (qntSalgadas+1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "titulo" + (qntSalgadas+1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "Titulo"+ (qntSalgadas+1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "titulo" + (qntSalgadas+1)).size()).isEqualTo(1);
+		busca.setTipo(TipoSabor.SALGADA);
+		busca.setDescricao("descricao");
+		assertThat(saborService.buscaSabores(busca)).hasSize(qntSalgadas);
+		busca.setDescricao("Descricao");
+		assertThat(saborService.buscaSabores(busca)).hasSize(qntSalgadas);
 		
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "Descricao"+ (qntSalgadas-1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "descricao" + (qntSalgadas-1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "Descricao"+ (qntSalgadas-1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "descricao" + (qntSalgadas-1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "Descricao"+ (qntSalgadas+1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.SALGADA, "descricao" + (qntSalgadas+1)).size()).isEqualTo(0);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "Descricao"+ (qntSalgadas+1)).size()).isEqualTo(1);
-		assertThat(saborService.buscaSaboresPorTipoETituloOuDescricao(TipoSabor.DOCE, "descricao" + (qntSalgadas+1)).size()).isEqualTo(1);
+		busca.setTitulo("titulo");
+		assertThat(saborService.buscaSabores(busca)).hasSize(qntSalgadas);
+		
+		busca.setTipo(TipoSabor.DOCE);
+		busca.setDescricao("descricao");
+		assertThat(saborService.buscaSabores(busca)).hasSize(qntDoces);
+		busca.setDescricao("Descricao");
+		assertThat(saborService.buscaSabores(busca)).hasSize(qntDoces);
+		
+		
 		
 	}
 	

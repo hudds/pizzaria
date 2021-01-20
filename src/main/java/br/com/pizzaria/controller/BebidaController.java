@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.pizzaria.model.Bebida;
-import br.com.pizzaria.model.form.BebidaForm;
+import br.com.pizzaria.model.dto.BebidaFormDTO;
 import br.com.pizzaria.service.BebidaService;
 import br.com.pizzaria.validation.BebidaValidation;
 
@@ -35,18 +35,18 @@ public class BebidaController {
 	}
 	
 	@RequestMapping(path = {"/cadastro"}, method = RequestMethod.GET)
-	public ModelAndView formCadastroBebida(BebidaForm novaBebida) {
+	public ModelAndView formCadastroBebida(BebidaFormDTO novaBebida) {
 		ModelAndView modelAndView = new ModelAndView("bebida/formCadastroBebida");
 		modelAndView.addObject("novaBebida", novaBebida);
 		return modelAndView;
 	}
 	
 	@RequestMapping(path = {"/cadastro"}, method = RequestMethod.POST)
-	public ModelAndView cadastraNovaBebida(@ModelAttribute("novaBebida") @Valid BebidaForm novaBebida, BindingResult bindingResult) {
+	public ModelAndView cadastraNovaBebida(@ModelAttribute("novaBebida") @Valid BebidaFormDTO novaBebida, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
 			return formCadastroBebida(novaBebida);
 		}
-		bebidaService.cadastra(novaBebida.createBebida());
+		bebidaService.grava(novaBebida.createBebida());
 		ModelAndView modelAndView = new ModelAndView("redirect:lista");
 		return modelAndView;
 	}
@@ -59,10 +59,10 @@ public class BebidaController {
 	}
 	
 	@RequestMapping(path= {"/edit/{bId}"})
-	public ModelAndView formEditBebida(@PathVariable("bId") Integer bId, BebidaForm bebida) {
+	public ModelAndView formEditBebida(@PathVariable("bId") Integer bId, BebidaFormDTO bebida) {
 		ModelAndView modelAndView = new ModelAndView("bebida/formEditBebida");
 		if(bebida.getId() == null) {
-			bebida = new BebidaForm(bebidaService.buscaBebida(bId));
+			bebida = new BebidaFormDTO(bebidaService.buscaBebida(bId));
 		}
 		modelAndView.addObject("editBebida", bebida);
 		
@@ -70,16 +70,17 @@ public class BebidaController {
 	}
 	
 	@RequestMapping(path= {"/edit"}, method = RequestMethod.POST)
-	public ModelAndView editBebida(@ModelAttribute("editBebida") @Valid BebidaForm editBebida, BindingResult bindingResult) {
+	public ModelAndView editBebida(@ModelAttribute("editBebida") @Valid BebidaFormDTO editBebida, BindingResult bindingResult, RedirectAttributes redirectAttributes ) {
 		if(bindingResult.hasErrors()) {
 			return formEditBebida(editBebida.getId(), editBebida);
 		}
 		bebidaService.edita(editBebida.createBebida());
 		ModelAndView modelAndView = new ModelAndView("redirect:edit/"+editBebida.getId());
+		redirectAttributes.addFlashAttribute("bebida_cadastro_status", "success");
 		return modelAndView;
 	}
 	
-	@RequestMapping(path={"/delete/{id}"})
+	@RequestMapping(path={"/delete/{id}"}, method = RequestMethod.GET)
 	public ModelAndView formConfirmarDelete(@PathVariable("id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView("bebida/confirmarDelete");
 		modelAndView.addObject("bebida", bebidaService.buscaBebida(id));

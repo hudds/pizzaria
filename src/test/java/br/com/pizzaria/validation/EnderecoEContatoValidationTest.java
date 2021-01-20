@@ -15,14 +15,14 @@ import org.springframework.validation.Errors;
 
 import br.com.caelum.stella.type.Estado;
 import br.com.pizzaria.model.Endereco;
-import br.com.pizzaria.model.form.EnderecoEContatoForm;
+import br.com.pizzaria.model.dto.EnderecoEContatoFormDTO;
 
 @SpringBootTest
 public class EnderecoEContatoValidationTest {
 
 	@Test
 	public void todasInformacoesValidas() {
-		EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(1);
+		EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(1);
 		Errors errors = validate(enderecoEContato);
 		assertThat(errors.hasErrors()).isFalse();
 
@@ -40,7 +40,7 @@ public class EnderecoEContatoValidationTest {
 			Endereco endereco = buildEndereco(1);
 			setEmptyValue(campo, endereco);
 
-			EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(1);
+			EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(1);
 			enderecoEContato.setEndereco(endereco);
 
 			Errors errors = validate(enderecoEContato);
@@ -62,7 +62,7 @@ public class EnderecoEContatoValidationTest {
 			Endereco endereco = buildEndereco(n);
 			endereco.setCep(cepInvalido);
 
-			EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(n);
+			EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(n);
 			enderecoEContato.setEndereco(endereco);
 
 			Errors errors = validate(enderecoEContato);
@@ -82,7 +82,7 @@ public class EnderecoEContatoValidationTest {
 			);
 
 		for (String telefoneInvalido : telefonesInvalidos) {
-			EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(n);
+			EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(n);
 			enderecoEContato.setCelular("");
 			enderecoEContato.setTelefone(telefoneInvalido);
 
@@ -103,7 +103,7 @@ public class EnderecoEContatoValidationTest {
 			);
 
 		for (String celularInvalido : celularesInvalidos) {
-			EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(n);
+			EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(n);
 			enderecoEContato.setTelefone("");
 			enderecoEContato.setCelular(celularInvalido);
 
@@ -117,7 +117,7 @@ public class EnderecoEContatoValidationTest {
 	
 	@Test
 	public void testaTelefoneECelularVazios() {
-		EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(1);
+		EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(1);
 		
 		// somente telefone null
 		enderecoEContato.setTelefone(null);
@@ -158,7 +158,7 @@ public class EnderecoEContatoValidationTest {
 	
 	@Test
 	public void testaEnderecoNumeroInvalido() {
-		EnderecoEContatoForm enderecoEContato = buildEnderecoEContatoForm(1);
+		EnderecoEContatoFormDTO enderecoEContato = buildEnderecoEContatoForm(1);
 		enderecoEContato.getEndereco().setNumero("aaaaaaaaaaaaaaa");
 		Errors errors = validate(enderecoEContato);
 		assertThat(errors.hasErrors()).isTrue();
@@ -195,8 +195,8 @@ public class EnderecoEContatoValidationTest {
 		return endereco;
 	}
 
-	private EnderecoEContatoForm buildEnderecoEContatoForm(Integer n) {
-		EnderecoEContatoForm enderecoEContato = new EnderecoEContatoForm();
+	private EnderecoEContatoFormDTO buildEnderecoEContatoForm(Integer n) {
+		EnderecoEContatoFormDTO enderecoEContato = new EnderecoEContatoFormDTO();
 		enderecoEContato.setEndereco(buildEndereco(n));
 		enderecoEContato.setCelular("219" + String.format("%08d", n));
 		enderecoEContato.setTelefone("212" + String.format("%07d", n));
@@ -207,7 +207,7 @@ public class EnderecoEContatoValidationTest {
 		return new BeanPropertyBindingResult(target, "enderecoEContato");
 	}
 
-	private Errors validate(EnderecoEContatoForm enderecoEContatoForm) {
+	private Errors validate(EnderecoEContatoFormDTO enderecoEContatoForm) {
 		Errors errors = buildErrors(enderecoEContatoForm);
 		new EnderecoEContatoValidation().validate(enderecoEContatoForm, errors);
 		return errors;

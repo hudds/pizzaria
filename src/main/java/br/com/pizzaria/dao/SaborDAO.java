@@ -6,10 +6,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.pizzaria.dao.filter.Filter;
+import br.com.pizzaria.dao.util.CriteriaQueryGeneratorByFilter;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
 
@@ -27,37 +31,24 @@ public class SaborDAO {
 		em.persist(sabor);
 		return sabor.getId();
 	}
-	
-	public List<Sabor> buscaSaboresPorTipo(TipoSabor tipo){
-		String jpql = "select s from Sabor s where s.tipo = :pTipo";
-		TypedQuery<Sabor> query = em.createQuery(jpql, Sabor.class);
-		query.setParameter("pTipo", tipo);
-		return query.getResultList();
-	}
 
 	public List<Sabor> buscaSabores() {
 		String jpql = "select s from Sabor s";
-		return em.createQuery(jpql, Sabor.class).getResultList();
-		
+		TypedQuery<Sabor> query = em.createQuery(jpql, Sabor.class);
+		return query.getResultList();
 	}
 	
-	public List<Sabor> buscaSaboresPorTituloOuDescricao(String tituloOuDescricao) {
-		String jpql = "select s from Sabor s where upper(s.titulo) like upper(:pBusca) or upper(s.descricao) like upper(:pBusca)";
-		TypedQuery<Sabor> query = em.createQuery(jpql, Sabor.class);
-		query.setParameter("pBusca", "%" + tituloOuDescricao + "%");
+	
+	
+	public List<Sabor> buscaSabores(Filter busca){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQueryGeneratorByFilter<Sabor> criteriaGenerator = new CriteriaQueryGeneratorByFilter<>(Sabor.class, cb);
+		CriteriaQuery<Sabor> cq = criteriaGenerator.generate(busca);
+		TypedQuery<Sabor> query = em.createQuery(cq);
 		return query.getResultList();
 		
 	}
 	
-	public List<Sabor> buscaSaboresPorTipoETituloOuDescricao(TipoSabor tipo, String tituloOuDescricao) {
-		String jpql = "select s from Sabor s where s.tipo = :pTipo and (upper(s.titulo) like upper(:pBusca) or upper(s.descricao) like upper(:pBusca))";
-		TypedQuery<Sabor> query = em.createQuery(jpql, Sabor.class);
-		query.setParameter("pBusca", "%" + tituloOuDescricao + "%");
-		query.setParameter("pTipo", tipo);
-		return query.getResultList();
-		
-	}
-
 	public void edita(Sabor sabor) {
 		em.merge(sabor);
 	}
@@ -82,4 +73,5 @@ public class SaborDAO {
 		query.setParameter("pIds", idsSabores);
 		return query.getResultList();
 	}
+
 }

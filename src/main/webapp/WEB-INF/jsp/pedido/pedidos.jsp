@@ -11,10 +11,11 @@
 		<h1>Pedidos</h1>
 		<div class="border m-3 p-3">
 			<h2>Buscar pedido</h2>	
-			<form:form modelAttribute="buscaPedido" cssClass="form" action="${contextPath}/pedido/lista" method="GET">
+			<form:form modelAttribute="buscaPedido" cssClass="form masks-form" action="${contextPath}/pedido/lista" method="GET">
 				<div class="form-group">
 					<label>Estado do pedido:</label>
-					<form:select path="estadoPedido" cssClass="form-control">
+					<form:select path="estado" cssClass="form-control">
+						<form:option value="" label="Selecione um estado de pedido"/>
 						<c:forEach items="${estadosPedido}" var="estadoPedido">
 							<form:option value="${estadoPedido}" label="${estadoPedido.value}"/>
 						</c:forEach>
@@ -35,24 +36,30 @@
 					<form:input path="secondDate" value="${ secondDateFormatted}" type="text" class="form-control date-time-input"/>
 				</div>
 				
-				<c:if test="${not empty buscaPedido.endereco.estado}">
-					<input type="hidden" id="show-endereco-form" value = "true">
+				<c:if test="${ not empty buscaPedido.endereco}">
+					<input type="hidden" id="show-endereco-form" value = "${not buscaPedido.endereco.vazio()}">
 				</c:if>
-				<c:if test="${empty buscaPedido.endereco.estado}">
+				<c:if test="${empty buscaPedido.endereco}">
 					<input type="hidden" id="show-endereco-form" value = "false">
 				</c:if>
+				<c:if test="${ not empty buscaPedido.cliente}">
+					<input type="hidden" id="show-cliente-form" value = "${not buscaPedido.cliente.vazio()}">
+				</c:if>
+				<c:if test="${empty buscaPedido.cliente}">
+					<input type="hidden" id="show-cliente-form" value = "false">
+				</c:if>
 				
-				<div id = "form-endereco" style="display: none;">
-					<div class="form-endereco masks-form w-100 p-3 mr-1">
-						<h3>Endereço</h3>
+				<fieldset id = "form-endereco" style="display: none;">
+						<legend>Dados do endereço de entrega</legend>
 						<div class="form-group">
 							<label>CEP: </label>
-							<form:input type="text" cssClass="form-control masked mask-cep" path="endereco.cep"/>
+							<form:input type="text" cssClass="form-control masked mask-cep input-cep" path="endereco.cep"/>
 							<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="endereco.cep"></form:errors>
 						</div>
 						<div class="form-group">
 							<label>Estado: </label>
 							<form:select cssClass="form-control input-estado" path="endereco.estado">
+								<form:option value="" label="Selecione um estado"/>
 								<form:options items="${tipos}"/>
 							</form:select>
 							<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="endereco.estado"></form:errors>
@@ -82,10 +89,40 @@
 							<form:input type="text" cssClass="form-control input-complemento" path="endereco.complemento"/>
 							<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="endereco.complemento"></form:errors>
 						</div>
-					</div>
-				</div>
+				</fieldset>
 				<div>
 					<button type="button" class="btn btn-link toggle-endereco-form" onclick="toggleEnderecoForm()">Mostrar opções de busca por endereço</button>
+				</div>
+				<fieldset id="form-cliente" style="display:none;">
+					<legend>Dados do cliente</legend>
+					<div class="form-group">
+						<label for="input-cliente-nome">Nome: </label>
+						<form:input id="input-cliente-nome" type="text" cssClass="form-control input-nome" path="cliente.nome"/>
+						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="cliente.nome"></form:errors>
+					</div>
+					<div class="form-group">
+						<label for="input-cliente-nome-de-usuario">Nome de usuário: </label>
+						<form:input id="input-cliente-nome-de-usuario" type="text" cssClass="form-control input-nome-de-usuario" path="cliente.nomeDeUsuario"/>
+						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="cliente.nomeDeUsuario"></form:errors>
+					</div>
+					<div class="form-group">
+						<label for="input-cliente-email">E-mail: </label>
+						<form:input id="input-cliente-email" type="text" cssClass="form-control input-email" path="cliente.email"/>
+						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="cliente.email"></form:errors>
+					</div>
+					<div class="form-group">
+						<label for="input-cliente-telefone">Telefone fixo: </label>
+						<form:input id="input-cliente-telefone" type="text" cssClass="form-control masked mask-tel" path="cliente.telefone"/>
+						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="cliente.telefone"></form:errors>
+					</div>
+					<div class="form-group">
+						<label for="input-cliente-celular">Telefone celular: </label>
+						<form:input id="input-cliente-celular" type="text" cssClass="form-control masked mask-cel" path="cliente.celular"/>
+						<form:errors cssClass="p-1 mt-2 rounded-lg alert-danger" element="div" path="cliente.celular"></form:errors>
+					</div>
+				</fieldset>
+				<div>
+					<button type="button" class="btn btn-link toggle-cliente-form" onclick="toggleClienteForm()">Mostrar opções de busca por cliente</button>
 				</div>
 				<form:button class="btn btn-danger">Buscar</form:button>
 			</form:form>

@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
-import br.com.pizzaria.model.form.BebidaForm;
+import br.com.pizzaria.model.dto.BebidaFormDTO;
 
 @SpringBootTest
 public class BebidaValidationTest {
@@ -17,7 +17,7 @@ public class BebidaValidationTest {
 	
 	@Test
 	public void validate() {
-		BebidaForm bebidaForm = createBebidaForm();
+		BebidaFormDTO bebidaForm = createBebidaForm();
 		BebidaValidation bebidaValidation = new BebidaValidation();
 		Errors errors = createErrors(bebidaForm, "novaBebida");
 		
@@ -28,7 +28,7 @@ public class BebidaValidationTest {
 	
 	@Test
 	public void validateTituloVazioTest() {
-		BebidaForm bebidaForm = createBebidaForm();
+		BebidaFormDTO bebidaForm = createBebidaForm();
 		BebidaValidation bebidaValidation = new BebidaValidation();
 		Errors errors = createErrors(bebidaForm, "novaBebida");
 		
@@ -51,7 +51,7 @@ public class BebidaValidationTest {
 	
 	@Test
 	public void validateValorVazioTest() {
-		BebidaForm bebidaForm = createBebidaForm();
+		BebidaFormDTO bebidaForm = createBebidaForm();
 		BebidaValidation bebidaValidation = new BebidaValidation();
 		Errors errors = createErrors(bebidaForm, "novaBebida");
 		
@@ -64,7 +64,7 @@ public class BebidaValidationTest {
 	
 	@Test
 	public void validateValorInvalidoTest() {
-		BebidaForm bebidaForm = createBebidaForm();
+		BebidaFormDTO bebidaForm = createBebidaForm();
 		BebidaValidation bebidaValidation = new BebidaValidation();
 		Errors errors = createErrors(bebidaForm, "novaBebida");
 		
@@ -83,8 +83,8 @@ public class BebidaValidationTest {
 		
 	}	
 	
-	public BebidaForm createBebidaForm() {
-		BebidaForm bebidaForm = new BebidaForm();
+	public BebidaFormDTO createBebidaForm() {
+		BebidaFormDTO bebidaForm = new BebidaFormDTO();
 		bebidaForm.setTitulo("Teste");
 		bebidaForm.setValor(BigDecimal.TEN);
 		return bebidaForm;

@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.UsuarioForm;
+import br.com.pizzaria.model.dto.UsuarioFormDTO;
 import br.com.pizzaria.service.UsuarioService;
 import br.com.pizzaria.validation.util.NameValidationUtil;
 import br.com.pizzaria.validation.util.SenhaUtil;
@@ -24,12 +24,12 @@ public class UsuarioValidation implements Validator {
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return UsuarioForm.class.isAssignableFrom(clazz);
+		return UsuarioFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		UsuarioForm usuario = (UsuarioForm) target;
+		UsuarioFormDTO usuario = (UsuarioFormDTO) target;
 		
 		NameValidationUtil.validate(usuario.getNome(), errors, "nome");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nomeDeUsuario", "field.required");
@@ -67,7 +67,7 @@ public class UsuarioValidation implements Validator {
 	
 	private boolean nomeDeUsuarioOuEmailExiste(String nomeDeUsuarioOuEmail) {
 		try {
-			usuarioService.buscaPeloEmailOuNome(nomeDeUsuarioOuEmail);
+			usuarioService.buscaPeloEmailOuNome(nomeDeUsuarioOuEmail, false);
 			return true;
 		} catch(UsernameNotFoundException e) {
 			return false;

@@ -20,7 +20,7 @@ public class PedidoBuilder {
 		pedido.setBebidas(bebidas);
 		pedido.setPizzas(pizzas);
 		pedido.setCliente(usuario);
-		pedido.setEstado(EstadoPedido.EM_PREPARO);
+		pedido.setEstado(EstadoPedido.REGISTRADO);
 		pedido.setHoraPedido(LocalDateTime.now());
 		pedido.setEndereco(usuario.getEndereco());
 		pedido.setPagamento(carrinho.getPagamento());

@@ -18,7 +18,7 @@
 							<h5 class="card-title">${pizza.tipoSabor}</h5>
 							<p class="card-text">${sabor.descricao}</p>
 							<h5 class="card-title"><fmt:formatNumber value="${pizza.preco}" type="currency" /></h5>
-							<form:form action="/pedido/fazerPedido" method="${method}">
+							<form:form action="/pedido/fazerPedido" method="GET">
 								<input name="sabores" type="hidden" value="${idsSaboresSelecionados}">
 								<input name="pizza" type="hidden" value="${pizza.id}">
 								<button class="btn btn-danger mb-1" type="submit">Selecionar</button>

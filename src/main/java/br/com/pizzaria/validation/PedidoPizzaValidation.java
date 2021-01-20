@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 import br.com.pizzaria.model.PedidoPizza;
 import br.com.pizzaria.model.Pizza;
 import br.com.pizzaria.model.Sabor;
-import br.com.pizzaria.model.form.PedidoPizzaForm;
+import br.com.pizzaria.model.dto.PedidoPizzaFormDTO;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.service.SaborService;
 
@@ -25,7 +25,7 @@ public class PedidoPizzaValidation implements Validator{
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return PedidoPizzaForm.class.isAssignableFrom(clazz);
+		return PedidoPizzaFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class PedidoPizzaValidation implements Validator{
 			return;
 		}
 		
-		PedidoPizzaForm pedido = (PedidoPizzaForm) target;
+		PedidoPizzaFormDTO pedido = (PedidoPizzaFormDTO) target;
 		
 		if(pedido.getQuantidade() <= 0) {
 			errors.rejectValue("quantidade", "pedidoPizza.quantidade.invalido");
@@ -50,12 +50,32 @@ public class PedidoPizzaValidation implements Validator{
 			return;
 		}
 		
-		Pizza pizza = pizzaService.buscaPizza(pedido.getIdPizza());
+		Pizza pizza = pizzaService.busca(pedido.getIdPizza());
 		List<Sabor> sabores = saborService.buscaSabores(pedido.getIdsSabores());
+		if(pizza == null) {
+			errors.rejectValue("idPizza", "pedidoPizza.idPizza.inexistente");
+			return;
+		}
+		
+		if(!pizza.getVisivel()) {
+			errors.rejectValue("idPizza", "pedidoPizza.idPizza.indisponivel");
+			return;
+		}
+		
+		if(sabores.isEmpty()) {
+			errors.rejectValue("idsSabores", "pedidoPizza.idsSabores.inexistente");
+			return;
+		}
+		
 		for(Sabor sabor : sabores) {
 			if(!sabor.getTipo().equals(pizza.getTipoSabor())) {
 				errors.rejectValue("idPizza", "pedidoPizza.tipoSabor.invalido");
 				errors.rejectValue("idsSabores", "pedidoPizza.tipoSabor.invalido");
+				break;
+			}
+			
+			if(!sabor.getVisivel()) {
+				errors.rejectValue("idsSabores", "pedidoPizza.tipoSabor.indisponivel");
 				break;
 			}
 		}

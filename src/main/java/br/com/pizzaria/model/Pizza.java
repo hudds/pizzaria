@@ -2,6 +2,7 @@ package br.com.pizzaria.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,9 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "TB_PIZZAS")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Pizza{
 	
 	@Id
@@ -27,9 +34,9 @@ public class Pizza{
 	@Column(name= "TIPO_SABOR")
 	@Enumerated(EnumType.STRING)
 	private TipoSabor tipoSabor;
-	
-	
-	
+	@Column(name = "VISIVEL")
+	@NotNull
+	private Boolean visivel = true;
 	
 	public String getTitulo() {
 		return titulo;
@@ -85,6 +92,12 @@ public class Pizza{
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public Boolean getVisivel() {
+		return visivel;
+	}
+	public void setVisivel(Boolean visivel) {
+		this.visivel = visivel;
 	}
 	
 }

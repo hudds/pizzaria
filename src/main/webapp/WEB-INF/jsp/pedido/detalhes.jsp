@@ -76,8 +76,9 @@
 								Bairro: ${pedido.endereco.bairro} <br>
 								CEP: <span class="cep">${pedido.endereco.cep}</span> <br>
 								<c:if test="${not pedido.endereco.complemento.trim().isEmpty()}">
-									Complemento: ${pedido.endereco.complemento}
+									Complemento: ${pedido.endereco.complemento}<br>
 								</c:if>
+								Cidade: <span class="cidade">${pedido.endereco.cidade}</span>, <span class="estado-endereco">${pedido.endereco.estado}</span> <br>
 							</p>
 						</div>
 					</div>

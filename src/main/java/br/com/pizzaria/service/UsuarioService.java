@@ -15,7 +15,7 @@ import br.com.pizzaria.dao.UsuarioDAO;
 import br.com.pizzaria.model.Endereco;
 import br.com.pizzaria.model.Pedido;
 import br.com.pizzaria.model.Usuario;
-import br.com.pizzaria.model.form.EnderecoEContatoForm;
+import br.com.pizzaria.model.dto.EnderecoEContatoFormDTO;
 
 @Service
 @Transactional
@@ -26,8 +26,8 @@ public class UsuarioService implements UserDetailsService {
 	@Autowired
 	private EnderecoService enderecoService;
 
-	public Usuario buscaPeloEmailOuNome(String usernameOrEmail) throws UsernameNotFoundException {
-		return (Usuario) usuarioDAO.buscaPeloEmailOuNome(usernameOrEmail);
+	public Usuario buscaPeloEmailOuNome(String usernameOrEmail, boolean fetchRoles) throws UsernameNotFoundException {
+		return (Usuario) usuarioDAO.buscaPeloEmailOuNome(usernameOrEmail, fetchRoles);
 	}
 	
 	public Integer buscaIdPeloEmailOuNome(String usernameOrEmail) {
@@ -65,7 +65,7 @@ public class UsuarioService implements UserDetailsService {
 		return usuarioDAO.getUserDetails(usernameOrEmail);
 	}
 
-	public void atualizaEnderecoEContato(EnderecoEContatoForm enderecoEContato, Usuario usuario) {
+	public void atualizaEnderecoEContato(EnderecoEContatoFormDTO enderecoEContato, Usuario usuario) {
 		enderecoService.grava(enderecoEContato.getEndereco());
 		usuario.setEndereco(enderecoEContato.getEndereco());
 		usuario.setTelefone(enderecoEContato.getTelefone());

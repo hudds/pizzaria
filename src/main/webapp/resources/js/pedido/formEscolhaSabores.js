@@ -3,18 +3,12 @@ const listaSaboresSelecionados = document.querySelector("#lista-sabores-selecion
 const templateCardSabor = document.querySelector("#template-card-sabor");
 const templateSaborSelecionado = document.querySelector("#template-sabor-selecionado");
 const campoBusca = document.querySelector(".campo-busca");
-const contextPath = document.querySelector("#context-path").value;
 const tipoSelecionado = document.querySelector("#input-tipo-selecionado").value;
 const formConfirmarPedido = document.querySelector(".form-confirmar-pedido-pizza");
 
 const saboresSelecionados = new Map();
 
-function buscaSabores(tipo="", busca=""){
-	var xmlHttp = new XMLHttpRequest()
-	xmlHttp.open("GET", contextPath +"/sabor/json?tipo="+tipo+"&busca="+busca, false)
-	xmlHttp.send(null)
-	return JSON.parse(xmlHttp.responseText)
-}
+var contextPath = document.querySelector("#context-path").value;
 
 function selecionaSabor(sabor) {
 	if (saboresSelecionados.size >= 4){
@@ -30,6 +24,8 @@ function selecionaSabor(sabor) {
 function deselecionaSabor(id, elementoSaborSelecionado){
     saboresSelecionados.delete(id);
     elementoSaborSelecionado.outerHTML=""
+    atualizaInputIdsSabores();
+	console.log(saboresSelecionados)
 }
 
 function criaElementoSaborSelecionado(sabor){
@@ -49,37 +45,39 @@ function criaCardSabor(sabor){
 	var cardBody = document.importNode(templateCardSabor.content, true);
 	cardBody.querySelector(".card-sabor-titulo").textContent = sabor["titulo"];
 	cardBody.querySelector(".card-sabor-descricao").textContent = sabor["descricao"];
-    var btnSelecionar = cardBody.querySelector(".card-sabor-btn-selecionar");
-    btnSelecionar.addEventListener("click", function(e) {
-        selecionaSabor(sabor)
-    })
+	var btnSelecionar = cardBody.querySelector(".card-sabor-btn-selecionar");
+	if(!(sabor.visivel === true)){
+		cardBody.querySelector(".card-sabor").classList.add("sabor-oculto")
+		btnSelecionar.remove()
+	} else {
+		btnSelecionar.addEventListener("click", function(e) {
+			selecionaSabor(sabor)
+		})
+	}
 	return cardBody
 }
 
 function renderizaSabores(sabores){
 	listaSabores.innerHTML = ""
 	for (let i = 0; i < sabores.length; i++){
-		var id = sabores[i]["id"]
-		var titulo = sabores[i]["titulo"]
-		var descricao = sabores[i]["descricao"]
 		listaSabores.appendChild(criaCardSabor(sabores[i]))
 	}
 }
 
 function acaoBuscar(){
-	console.log(tipoSelecionado)
 	var busca = campoBusca.value.trim();
 	campoBusca.value = busca
 	var tipoBusca = tipoSelecionado
-	var sabores = buscaSabores(tipoBusca, busca)
-	var alert = document.querySelector(".alert-busca")
-	if(busca.trim().length > 0){
-		alert.innerText = 'Exibindo resultados para a busca "'+ busca +'".'
-		alert.style.display = "block";
-	} else {
-		alert.style.display = "none";
-	}
-	renderizaSabores(sabores);
+	buscaSabores(tipoBusca, busca, (sabores) => { 
+		var alert = document.querySelector(".alert-busca")
+		if(busca.trim().length > 0){
+			alert.innerText = 'Exibindo resultados para a busca "'+ busca +'".'
+			alert.style.display = "block";
+		} else {
+			alert.style.display = "none";
+		}
+		renderizaSabores(sabores);
+	})
 }
 
 function adicionaEventoAoFormBusca(){
@@ -102,6 +100,8 @@ function atualizaInputIdsSabores(){
 }
 
 
-renderizaSabores(buscaSabores(tipoSelecionado))
+buscaSabores(tipoSelecionado, "", (sabores) => {
+	renderizaSabores(sabores)
+})
 adicionaEventoAoFormBusca()
 console.log(contextPath)

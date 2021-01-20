@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import br.com.pizzaria.model.form.NovaSenhaForm;
+import br.com.pizzaria.model.dto.NovaSenhaFormDTO;
 import br.com.pizzaria.service.UsuarioService;
 import br.com.pizzaria.validation.util.SenhaUtil;
 
@@ -24,7 +24,7 @@ public class NovaSenhaValidation implements Validator{
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return NovaSenhaForm.class.isAssignableFrom(clazz);
+		return NovaSenhaFormDTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class NovaSenhaValidation implements Validator{
 			return;
 		}
 		
-		NovaSenhaForm novaSenha = (NovaSenhaForm) target;
+		NovaSenhaFormDTO novaSenha = (NovaSenhaFormDTO) target;
 		
 		
 		UserDetails userDetails = usuarioService.loadUserByUsername(authentication.getName());

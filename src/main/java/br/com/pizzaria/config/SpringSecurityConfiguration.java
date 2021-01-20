@@ -32,11 +32,18 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 		.antMatchers("/sabor/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/sabor/edit/**").hasRole("ADMIN")
 		.antMatchers("/sabor/delete/**").hasRole("ADMIN")
+		.antMatchers("/sabor/esconde/**").hasRole("ADMIN")
+		.antMatchers("/sabor/mostra/**").hasRole("ADMIN")
+		.antMatchers("/sabor/visivel/**").hasRole("ADMIN")
 		.antMatchers("/bebida/lista/**").hasRole("ADMIN")
 		.antMatchers("/bebida/delete/**").hasRole("ADMIN")
 		.antMatchers("/bebida/edit/**").hasRole("ADMIN")
 		.antMatchers("/bebida/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/pedido/lista/**").hasRole("ADMIN")
+		.antMatchers("/pedido/json/lista/**").hasRole("ADMIN")
+		.antMatchers("/pedido/recebidos/**").hasRole("ADMIN")
+		.antMatchers("/pedido/preparando/**").hasRole("ADMIN")
+		.antMatchers("/pedido/enviado/**").hasRole("ADMIN")
 		.antMatchers("/pedido/endereco/**").authenticated()
 		.antMatchers("/pedido/pagamento/**").authenticated()
 		.antMatchers("/pedido/resumo/**").authenticated()
@@ -46,9 +53,10 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
 		.antMatchers("/pizza/cadastro/**").hasRole("ADMIN")
 		.antMatchers("/pizza/edit/**").hasRole("ADMIN")
 		.antMatchers("/pizza/delete/**").hasRole("ADMIN")
+		.antMatchers("/pizza/visivel/**").hasRole("ADMIN")
 		.antMatchers("/*").permitAll()
 		.and().formLogin().loginPage("/login").failureUrl("/login?status=bad_credentials")
-		.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
+		.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
 	}
 	
 	@Override
