@@ -1,5 +1,6 @@
 package br.com.pizzaria.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import br.com.pizzaria.dao.PedidoDAO;
 import br.com.pizzaria.model.EstadoPedido;
 import br.com.pizzaria.model.Pedido;
+import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.dto.BuscaLikePedidoDTO;
 
 @Service
@@ -29,6 +31,17 @@ public class PedidoService {
 	
 	@CacheEvict(value = "pedidos", allEntries = true)
 	public void grava(Pedido pedido) {
+		pedido.getBebidas().forEach(b -> {
+			if(!b.getBebida().getVisivel()) {
+				throw new IllegalArgumentException("Todas as bebidas devem ser visiveis.");
+			}
+		});
+		
+		pedido.getPizzas().forEach(pedidoPizza -> pedidoPizza.getSabores().forEach(s -> {
+			if(!s.getVisivel()) {
+				throw new IllegalArgumentException("Todos os sabores devem ser visiveis.");
+			}
+		}));
 		pedidoDAO.grava(pedido);
 		usuarioService.addPedido(pedido.getCliente(), pedido);
 		

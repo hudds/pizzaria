@@ -7,14 +7,20 @@ const intervaloDeBusca = 5000;
 
 const stringFormaPagamento = { "CARTAO": "Cartão", "DINHEIRO": "Dinheiro" }
 
-function mantemAtualizado(estado){
+function mantemAtualizado(estado, locationCaseFailure){
 	let busca = {
 		estado: estado,
 		fetchPizzas: "true",
 		fetchBebidas: "true"
 	}
-	buscaPedidos(busca)
-	setInterval(() => buscaPedidos(busca), intervaloDeBusca)
+	let callbackError = (status) =>{
+		console.log("erro " + status)
+		if(status === 403 || status === 301 || status === 302){
+			window.location.href=locationCaseFailure;
+		}
+	}
+	buscaPedidos(busca, callbackError)
+	setInterval(() => buscaPedidos(busca, callbackError), intervaloDeBusca)
 }
 
 // function buscaPedidos(estado) {
@@ -30,12 +36,17 @@ function mantemAtualizado(estado){
 // }
 
 
-function buscaPedidos(busca) {
+function buscaPedidos(busca, callbackError=null) {
 	var xmlHttp = new XMLHttpRequest()
 	xmlHttp.responseType = "json"
 	xmlHttp.onreadystatechange = function() {
-		if (xmlHttp.status == 200) {
-			renderizaListaPedidos(listaPedidosRecebidos, xmlHttp.response)
+		if(xmlHttp.readyState == XMLHttpRequest.DONE){
+			if (xmlHttp.status == 200) {
+				renderizaListaPedidos(listaPedidosRecebidos, xmlHttp.response)
+			} else if(callbackError != null) {
+				console.log("xmlHttp erro " + xmlHttp.status)
+				callbackError(xmlHttp.status)
+			}
 		}
 	}
 	let requestParameters = "?";

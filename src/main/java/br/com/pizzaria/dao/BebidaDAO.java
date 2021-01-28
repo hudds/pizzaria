@@ -27,6 +27,13 @@ public class BebidaDAO {
 		TypedQuery<Bebida> query = em.createQuery(jpql, Bebida.class);
 		return query.getResultList();
 	}
+	
+	public List<Bebida> buscaBebidas(boolean visivel) {
+		String jpql = "select b from Bebida b where b.visivel = :pVisivel";
+		TypedQuery<Bebida> query = em.createQuery(jpql, Bebida.class);
+		query.setParameter("pVisivel", visivel);
+		return query.getResultList();
+	}
 
 	public Bebida buscaBebida(Integer bId) {
 		return em.find(Bebida.class, bId);

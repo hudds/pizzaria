@@ -18,25 +18,25 @@
 						<a href="/sabor/cadastro/" class="btn btn-danger">Cadastrar novo sabor</a>
 					</sec:authorize>
 	      		</li>
-			      <li class="nav-item dropdown">
+	      		
+			      <li id="dropdownTiposSabores" class="nav-item dropdown">
 			        <a class="btn btn-danger dropdown-toggle dropdown-tipo-selecionado" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">        	
 			          	<c:if test="${not empty tipoSelecionado}">Exibindo somente pizzas do tipo ${tipoSelecionado}</c:if>
 			          	<c:if test="${empty tipoSelecionado}">Exibir somente pizzas do tipo:</c:if>
 			        </a>
 			        <div class="dropdown-menu dropdown-tipos" aria-labelledby="navbarDropdown">
 			
-			        	<button class="dropdown-item dropdown-item-tipo" type = "button">TODAS</button>
+			        	<button class="dropdown-item dropdown-item-tipo" type = "button" onclick="saborController.selectTipo('')">TODAS</button>
 				        <c:forEach items="${tipos}" var="tipo">
-				        	<button class="dropdown-item dropdown-item-tipo" type="button">${tipo }</button>
+				        	<button onclick="saborController.selectTipo('${tipo}')" class="dropdown-item dropdown-item-tipo" type="button" value="">${tipo }</button>
 			        	</c:forEach>
 			        </div>
 			      </li>
 			    </ul>
-			    <form:form class="form-inline my-2 my-lg-0 form-busca" >
-			      <input class="form-control mr-sm-2 campo-busca" name="busca" autocomplete="off" value="" type="search" placeholder="Insira o nome ou a descrição aqui" aria-label="Insira o nome ou a descrição aqui">
-			      <input type="hidden" value="${tipoSelecionado}" name="tipo"/>
-			      <button class="btn btn-outline-success my-2 my-sm-0 btn-busca" type="button" onclick="acaoBuscar()">Buscar</button>
-			    </form:form>
+			    <form class="form-inline my-2 my-lg-0 form-busca" id="formBusca" onsubmit="saborController.fetchSabores(event)">
+			      	<input id="inputSearchSabor" class="form-control mr-sm-2 campo-busca" name="busca" autocomplete="off" value="" type="search" placeholder="Insira o nome ou a descrição aqui" aria-label="Insira o nome ou a descrição aqui">
+			      	<button class="btn btn-outline-success my-2 my-sm-0 btn-busca" type="button" onclick="saborController.fetchSabores()">Buscar</button>
+			    </form>
 			  </div>
 			</div>
 			
@@ -53,11 +53,13 @@
 			</div>
 		</c:if>
 		
-		<div class="alert alert-secondary mt-1 mb-5 alert-busca" style="display:none;">
-				
+		<div id="searchMessageContainer">
 		</div>
 		
-		<div class="container container-sabores text-center" id = "lista-sabores">
+		<div id="messageContainer">
+		</div>
+		
+		<div class="container container-sabores text-center" id = "sabores">
 			<template id="template-card-sabor">
 				<div class="card m-2 card-sabor">
 					<div class="card-body" >
@@ -86,29 +88,21 @@
 			</template>
 		</div>
 	</main>
-	<sec:authorize access="hasRole('ADMIN')">
-		<div class="modal fade" id="modalConfirmarDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<dialog class="modal-content">
-					<header class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Tem certeza que deseja deletar o sabor <span class="modal-nome-sabor"></span>?</h5>
-					    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					    	<span aria-hidden="true">&times;</span>
-						</button>
-					</header>
-					<footer class="modal-footer">
-						<form:form class="form-deletar-sabor" action="" method="POST">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
-							<button type="submit" class="btn btn-primary">Sim</button>
-						</form:form>
-					</footer>
-				</dialog>
-			</div>
-		</div>
-	</sec:authorize>
-	<script src="${pageContext.request.contextPath}/resources/js/Ajax.js"></script>
-	<script>var ajax = new Ajax("${pageContext.request.contextPath}", "${_csrf.token}", "${_csrf.headerName}")</script>
-	<script src="${pageContext.request.contextPath}/resources/js/sabor/buscaSabores.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/js/sabor/listaSabores.js"></script>
+	<div id="containerModalConfirmDelete"></div>
+	<sec:authorize access="hasRole('ADMIN')" var="isAdmin"></sec:authorize>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/Ajax.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/Paths.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/helper/Binder.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/service/ProxyFactory.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/model/Message.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/View.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/MessageView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/ModalConfirmDeleteView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/sabor/DropdownTiposSaboresView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/sabor/SaborView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/sabor/SaborService.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/sabor/SaborController.js"></script>
+	<script>var saborController = new SaborController("${pageContext.request.contextPath}", "${_csrf.token}", "${_csrf.headerName}", ${isAdmin})</script>
+
 </tags:pageTemplate>
   

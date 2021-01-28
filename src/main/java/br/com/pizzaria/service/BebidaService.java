@@ -6,10 +6,12 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import br.com.pizzaria.dao.BebidaDAO;
 import br.com.pizzaria.model.Bebida;
+import br.com.pizzaria.security.util.RoleChecker;
 
 @Component
 @Transactional
@@ -26,6 +28,18 @@ public class BebidaService {
 	public List<Bebida> buscaBebidas() {
 		return bebidaDAO.buscaBebidas();
 	}
+	
+	public List<Bebida> buscaBebidas(boolean visivel) {
+		return bebidaDAO.buscaBebidas(visivel);
+	}
+	
+	public List<Bebida> buscaBebidas(Authentication authentication) {
+		if(RoleChecker.currentUserIsAdmin(authentication)) {
+			return this.buscaBebidas();
+		}
+		return bebidaDAO.buscaBebidas(true);
+	}
+	
 
 	public Bebida buscaBebida(Integer bId) {
 		return bebidaDAO.buscaBebida(bId);

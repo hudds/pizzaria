@@ -29,6 +29,7 @@ import br.com.pizzaria.builder.PedidoBuilder;
 import br.com.pizzaria.controller.contracts.EstadoPedidoDTO;
 import br.com.pizzaria.controller.formatter.StringToLocalDateTimeFormatter;
 import br.com.pizzaria.controller.util.ValidadorDeEstadoParaPedido;
+import br.com.pizzaria.model.Bebida;
 import br.com.pizzaria.model.Carrinho;
 import br.com.pizzaria.model.EstadoPedido;
 import br.com.pizzaria.model.FormaDePagamento;
@@ -121,7 +122,11 @@ public class PedidoController {
 	@RequestMapping(path = { "/addBebida" }, method = RequestMethod.POST)
 	public ModelAndView adicionaBebidaAoCarrinho(@RequestParam("id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView("redirect:carrinho");
-		PedidoBebida pedidoBebida = new PedidoBebida(bebidaService.buscaBebida(id), 1);
+		Bebida bebida = bebidaService.buscaBebida(id);
+		if(!bebida.getVisivel()) {
+			return itensCarrinho();
+		}
+		PedidoBebida pedidoBebida = new PedidoBebida(bebida, 1);
 		carrinho.adicionaItem(pedidoBebida);
 		return modelAndView;
 	}
@@ -133,7 +138,7 @@ public class PedidoController {
 		modelAndView.addObject("ids", itens.keySet());
 		modelAndView.addObject("itens", itens);
 		modelAndView.addObject("valorTotal", carrinho.getValorTotal());
-		modelAndView.addObject("bebidas", bebidaService.buscaBebidas());
+		modelAndView.addObject("bebidas", bebidaService.buscaBebidas(true));
 		modelAndView.addObject("carrinhoContemPizzas", carrinho.contemPizzas());
 		modelAndView.addObject("carrinhoVazio", carrinho.isEmpty());
 		return modelAndView;
@@ -276,7 +281,7 @@ public class PedidoController {
 
 	private void formEscolhaPizza(ModelAndView modelAndView) {
 		modelAndView.setViewName("pedido/formEscolhaPizza");
-		List<Pizza> pizzas = pizzaService.buscaPizzasOrdenadasPeloTipoSabor(TipoSabor.SALGADA);
+		List<Pizza> pizzas = pizzaService.buscaPizzasOrdenadasPeloTipoSabor(TipoSabor.SALGADA, true);
 		modelAndView.addObject("pizzas", pizzas);
 	}
 

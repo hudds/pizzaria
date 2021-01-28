@@ -30,6 +30,10 @@ public class PizzaService {
 		return pizzaDAO.buscaPizzas();
 	}
 	
+	public List<Pizza> buscaPizzas(boolean visivel) {
+		return pizzaDAO.buscaPizzas(visivel);
+	}
+	
 	public List<Pizza> buscaPizzas(Authentication authentication){
 		if(RoleChecker.currentUserIsAdmin(authentication)) {
 			return this.buscaPizzas();
@@ -39,7 +43,11 @@ public class PizzaService {
 	}
 	
 	public List<Pizza> buscaPizzasOrdenadasPeloTipoSabor(TipoSabor primeiro){
-		List<Pizza> pizzas = buscaPizzas();
+		return buscaPizzasOrdenadasPeloTipoSabor(primeiro, null);
+	}
+	
+	public List<Pizza> buscaPizzasOrdenadasPeloTipoSabor(TipoSabor primeiro, Boolean visivel){
+		List<Pizza> pizzas = visivel == null ? buscaPizzas() : buscaPizzas(visivel);
 		pizzas.sort((p1, p2) -> {
 			Integer p1Value = p1.getTipoSabor() == primeiro ? 0 : 1;
 			Integer p2Value = p2.getTipoSabor() == primeiro ? 0 : 1;

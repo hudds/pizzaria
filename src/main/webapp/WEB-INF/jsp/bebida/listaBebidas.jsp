@@ -28,33 +28,31 @@
 					Bebida foi cadastrada!
 				</div>
 			</c:if>
-			
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">Título</th>
-						<th scope="col">Valor</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach items="${bebidas}" var="bebida">
-						<tr>
-							<td>${bebida.titulo}</td>
-							<td><fmt:formatNumber type="currency" value="${bebida.valor}" currencyCode="BRL" /></td>
-							<sec:authorize access="hasRole('ADMIN')">
-								<td>
-									<a href="${contextPath}/bebida/edit/${bebida.id}" class="btn btn-danger text-white">Editar</a>
-								</td>
-								<td>
-									<a href="${contextPath}/bebida/delete/${bebida.id}" class="btn btn-danger text-white">Deletar</a>
-								</td>
-							</sec:authorize>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-
+			<c:if test="${bebida_edit_status == 'success'}">
+				<div class="alert alert-success" role="alert">
+					Bebida foi editada!
+				</div>
+			</c:if>
+			<div id="messageContainer"></div>
+			<section id="bebidas"></section>
 		</div>
+	<div id="containerModalConfirmDelete">
+	</div>
+	<script src="${pageContext.request.contextPath}/resources/js/Paths.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/Ajax.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/helper/Binder.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/service/ProxyFactory.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/model/Message.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/View.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/MessageView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/ModalConfirmDeleteView.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/sabor/listaSabores.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/bebida/BebidaService.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/bebida/BebidaView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/bebida/BebidaController.js"></script>
+	<sec:authorize access="hasRole('ADMIN')" var="isAdmin"></sec:authorize>
+	<script>
+		var bebidaController = new BebidaController("${pageContext.request.contextPath}", "${_csrf.token}", "${_csrf.headerName}", ${isAdmin});
+	</script>
 </tags:pageTemplate>
   

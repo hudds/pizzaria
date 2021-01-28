@@ -9,32 +9,17 @@ A aplicação está sendo feita em Java 8 com o framework Spring Boot 2.0. Para 
 
 # Configurações de Persistência
 O pool de conexões utilizado na aplicação é o Hikari.
-As configuraçes do pool de conexões e do DataSource estão localizadas na classe ``/src/main/java/br/com/pizzaria/config/JpaConfig.java``. Insira o nome de usuário e a senha do seu banco de dados MySQL nos métodos ``hikariConfig.setUsername("INSIRA O NOME DE USUÁRIO AQUI")`` e ``hikariConfig.setPassword("INSIRA A SENHA AQUI")``, como demonstrado abaixo:
+As configuraçes do pool de conexões e do DataSource estão localizadas na classe ``/src/main/java/br/com/pizzaria/config/JpaConfig.java``. 
+
+As configurações de acesso ao banco de dados devem estar em um arquivo chamado `local-dev-environment.properties` que precisa ser criado na pasta `pizzaria/src/main/resources/`
+
+O arquivo `local-dev-environment.properties` deve conter o seguinte conteúdo:
 
 ```
-@Configuration
-public class JpaConfig {
-	
-	@Bean
-	public DataSource dataSource() throws PropertyVetoException {
-		HikariConfig hikariConfig = new HikariConfig();
-		
-		hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		hikariConfig.setUsername("INSIRA O NOME DE USUÁRIO AQUI");
-		hikariConfig.setPassword("INSIRA A SENHA AQUI");
-		hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/pizzaria");
-		hikariConfig.setMinimumIdle(10);
-		hikariConfig.setMaximumPoolSize(20);
-		hikariConfig.setMaxLifetime(1200000);
-		
-		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-		
-		return dataSource;
-	}
-	
-}
+database.username=INSIRA O NOME DE USUÁRIO AQUI
+database.password=INSIRA A SENHA AQUI
+database.url=INSIRA A URL AQUI
 ```
-
 
 O Hibernate está configurado para apenas validar as tabelas do banco de dados, ou seja, ele não cria tabelas automaticamente. Para mudar isso, vá no arquivo ``src/main/resources/application.properties`` e altere a propiedade ``spring.jpa.hibernate.ddl-auto=validate`` para ``spring.jpa.hibernate.ddl-auto=update``.
 

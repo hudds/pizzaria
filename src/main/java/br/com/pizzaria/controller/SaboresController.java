@@ -2,6 +2,7 @@ package br.com.pizzaria.controller;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +13,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.pizzaria.controller.contracts.ErrorDTO;
 import br.com.pizzaria.dao.filter.BuscaLikeSabor;
 import br.com.pizzaria.dao.filter.BuscaSabor;
 import br.com.pizzaria.model.Sabor;
@@ -99,6 +103,12 @@ public class SaboresController {
 		modelAndView.addObject("tipos", TipoSabor.values());
 		return modelAndView;
 	}
+	
+	@GetMapping("/tipos")
+	@ResponseBody
+	public TipoSabor[] tipos() {
+		return TipoSabor.values();
+	}
 
 	@RequestMapping(path = { "/edit" }, method = RequestMethod.POST)
 	public ModelAndView edit(@ModelAttribute("sabor") @Valid SaborFormDTO saborForm, BindingResult result,
@@ -133,15 +143,28 @@ public class SaboresController {
 		return modelAndView;
 	}
 	
-	@RequestMapping(path={"/esconde/{id}"}, method=RequestMethod.PUT)
-	public ResponseEntity<HttpStatus> esconde(@PathVariable(name = "id") Integer id) {
-		saborService.setVisivel(id, false);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	@RequestMapping(path = { "/json/delete/{id}" }, method = RequestMethod.DELETE)
+	public ResponseEntity<Object> jsonDelete(@PathVariable Integer id) {
+		try {
+			saborService.remove(id);
+		} catch (DataIntegrityViolationException e) {
+			ErrorDTO errorDTO = new ErrorDTO();
+			errorDTO.setErrorName(ErrorDTO.DATA_INTEGRITY_ERROR_NAME);
+			errorDTO.setMessage(ErrorDTO.DATA_INTEGRITY_ERROR_MESSAGE);
+			return new ResponseEntity<Object>(errorDTO, HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
 	}
 	
-	@RequestMapping(path={"/mostra/{id}"}, method=RequestMethod.PUT)
-	public ResponseEntity<HttpStatus> mostra(@PathVariable(name = "id") Integer id) {
-		saborService.setVisivel(id, true);
+	
+	@RequestMapping(path={"/visivel/{id}"}, method=RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> setVisivel(@PathVariable(name = "id") Integer id, @RequestBody Boolean visivel) {
+		try {
+			saborService.setVisivel(id, visivel);
+		}catch(EntityNotFoundException e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

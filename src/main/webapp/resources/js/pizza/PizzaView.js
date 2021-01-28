@@ -30,7 +30,9 @@ class PizzaView extends View{
                 <a href="/pizza/edit/${pizza.id}" class="btn btn-danger mb-1">Editar Pizza</a>
             </div>
             <div>
-                <a href="/pizza/delete/${pizza.id}" class="btn btn-danger">Deletar Pizza</a>
+                <a href="/pizza/delete/${pizza.id}" onclick="pizzaController.updateModalDelete(${pizza.id}, '${pizza.titulo}')" class="btn btn-danger" data-toggle="modal" data-target="#${ModalConfirmDeleteView.getHtmlId()}">
+                    Deletar Pizza
+                </a>
             </div>
         `
     }
@@ -40,7 +42,7 @@ class PizzaView extends View{
         let imgTitle = pizza.visivel ?  "Tornar invisível" : "Tornar visível"
         let alt = pizza.visivel ?  "Olho" : "Olho riscado"
         return `
-            <button class="btn-toggle-visibility" type="button" onclick="pizzaController.setVisivel(${pizza.id}, ${!pizza.visivel})"><img title="${imgTitle}" alt="${alt}" src="${this._pathImages}${imgName}"/></button>
+            <button class="btn-toggle-visibility" type="button" onclick="pizzaController.setVisivel(${pizza.id}, '${!pizza.visivel}')"><img title="${imgTitle}" alt="${alt}" src="${this._pathImages}${imgName}"/></button>
         `  
     }
     

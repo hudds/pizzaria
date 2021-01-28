@@ -57,3 +57,6 @@ build/
 .vscode/
 
 .attach_pid*
+
+### local environment configurations ##
+local-dev-environment.properties

@@ -17,16 +17,28 @@
 				Informações foram cadastradas com sucesso!
 			</div>
 		</c:if>
+		<div id="messageContainer">
+		</div>
 		<section class="container text-center">
 			<div id="pizzas">
 				
 			</div>
 		</section>
 	</div>
-	<script src="${pageContext.request.contextPath}/resources/js/Ajax.js"></script>
+	
+	<div id="containerModalConfirmDelete">
+	</div>
+	
+	<script src="${pageContext.request.contextPath}/resources/js/shared/Ajax.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/Paths.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/js/View.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/helper/Binder.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/service/ProxyFactory.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/model/Message.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/View.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/MessageView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/shared/view/ModalConfirmDeleteView.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/pizza/PizzaView.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/pizza/PizzaService.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/pizza/PizzaController.js"></script>
 	<sec:authorize access="hasRole('ADMIN')" var="isAdmin"></sec:authorize>
 	<script>var pizzaController = new PizzaController("${pageContext.request.contextPath}", "${_csrf.token}", "${_csrf.headerName}", ${isAdmin})</script>
