@@ -36,4 +36,4 @@ O nome de usuário é "admin" e a senha é "admin", caso queira mudar a senha, s
 Caso queira popular a base de dados com exemplos, rode [este script sql (MySQL).](https://gist.github.com/hudds/db0cd12f7a0297000ce0ff9b231a19d0)
 
 # Rodando a aplicação
-Basta rodar a classe ``src/main/java/br/com/pizzaria/PizzariaApplication.java`` e em seguida acessar localhost:8080.
+Basta fazer a build do projeto usando o Maven, rodar a classe ``src/main/java/br/com/pizzaria/PizzariaApplication.java`` e em seguida acessar localhost:8080.
