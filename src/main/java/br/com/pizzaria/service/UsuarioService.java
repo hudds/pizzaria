@@ -62,7 +62,9 @@ public class UsuarioService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-		return usuarioDAO.getUserDetails(usernameOrEmail);
+		UserDetails user = usuarioDAO.getUserDetails(usernameOrEmail);
+		System.out.println("user: " + user.getUsername() + " found");
+		return user;
 	}
 
 	public void atualizaEnderecoEContato(EnderecoEContatoFormDTO enderecoEContato, Usuario usuario) {
