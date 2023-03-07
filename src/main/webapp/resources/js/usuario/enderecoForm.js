@@ -18,7 +18,7 @@ function buscaEndereco(cep, callback){
         return
     }
     const http = new XMLHttpRequest()
-    const url="https://viacep.com.br/ws/"+cep+"/json/unicode"
+    const url="https://viacep.com.br/ws/"+cep+"/json"
 
     http.onreadystatechange = function(){
         if(http.status == 200){
