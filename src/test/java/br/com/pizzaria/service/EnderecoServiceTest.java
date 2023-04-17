@@ -2,23 +2,22 @@ package br.com.pizzaria.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.caelum.stella.type.Estado;
 import br.com.pizzaria.dao.EnderecoDAO;
 import br.com.pizzaria.model.Endereco;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @ContextConfiguration(classes = { EnderecoService.class, EnderecoDAO.class})
 @EntityScan(basePackageClasses = { Endereco.class})
 @DataJpaTest

@@ -7,24 +7,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.pizzaria.dao.SaborDAO;
 import br.com.pizzaria.dao.filter.BuscaLikeSabor;
 import br.com.pizzaria.model.Sabor;
 import br.com.pizzaria.model.TipoSabor;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @ContextConfiguration(classes = { SaborService.class, SaborDAO.class})
 @EntityScan(basePackageClasses = { Sabor.class })
 @DataJpaTest

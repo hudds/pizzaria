@@ -7,17 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
@@ -31,7 +30,7 @@ import br.com.pizzaria.model.dto.PedidoPizzaFormDTO;
 import br.com.pizzaria.service.PizzaService;
 import br.com.pizzaria.service.SaborService;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @ContextConfiguration(classes = { SaborService.class, SaborDAO.class, PizzaService.class, PizzaDAO.class})
 @EntityScan(basePackageClasses = { Sabor.class})
 @DataJpaTest
